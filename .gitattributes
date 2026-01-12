@@ -1,0 +1,2 @@
+Kinematic_Genomics_Atlas/Data_Raw/*.fa filter=lfs diff=lfs merge=lfs -text
+Kinematic_Genomics_Atlas/Data_Processed/*.csv filter=lfs diff=lfs merge=lfs -text

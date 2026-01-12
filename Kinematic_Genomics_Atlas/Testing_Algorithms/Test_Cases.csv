@@ -1,0 +1,4 @@
+Test_ID,Target_Region,Metric,Expected_Value,Observed_Value,Status
+T001_SNR_Rigor,OR4F5 / 62k_Buffer,Signal-to-Noise Ratio,> 2.0x,2.20x,PASS
+T002_Polarity_Shift,OR4F5 vs 62k_Buffer,Vector Alignment (Dot Product),< 0.0,-0.001647,PASS
+T003_Fracture_Resonance,Multi-Point Periodic,Fracture_Prob (P_f) Consistency,Stable Constant (> 0.7),0.798 (Repeating),PASS
