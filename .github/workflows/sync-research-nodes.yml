@@ -1,0 +1,39 @@
+name: Sync Research Nodes
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "30 2 * * *"
+
+jobs:
+  sync-nodes:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Sync outer-space-research snapshot
+        run: |
+          mkdir -p connected/outer-space-research
+          curl -L "https://raw.githubusercontent.com/shiroonigami23-ui/outer-space-research/main/README.md" -o connected/outer-space-research/README.md
+          curl -L "https://api.github.com/repos/shiroonigami23-ui/outer-space-research" -o connected/outer-space-research/repo.json
+          curl -L "https://api.github.com/repos/shiroonigami23-ui/outer-space-research/languages" -o connected/outer-space-research/languages.json
+          curl -L "https://api.github.com/repos/shiroonigami23-ui/outer-space-research/releases" -o connected/outer-space-research/releases.json
+
+      - name: Sync under-water-deep-research snapshot
+        run: |
+          mkdir -p connected/under-water-deep-research
+          curl -L "https://raw.githubusercontent.com/shiroonigami23-ui/under-water-deep-research/main/README.md" -o connected/under-water-deep-research/README.md
+          curl -L "https://api.github.com/repos/shiroonigami23-ui/under-water-deep-research" -o connected/under-water-deep-research/repo.json
+          curl -L "https://api.github.com/repos/shiroonigami23-ui/under-water-deep-research/languages" -o connected/under-water-deep-research/languages.json
+          curl -L "https://api.github.com/repos/shiroonigami23-ui/under-water-deep-research/releases" -o connected/under-water-deep-research/releases.json
+
+      - name: Commit changes
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add connected
+          git diff --staged --quiet || git commit -m "Sync-research-node-snapshots"
+          git push
