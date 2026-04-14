@@ -1,0 +1,9 @@
+Metric,Value
+Train Accuracy,0.9448 (94.48%)
+Test Accuracy,0.9200 (92.00%)
+Validation Accuracy (5-fold CV),0.9273 ± 0.0025
+Validation ROC-AUC (5-fold CV),0.6296 ± 0.0394
+Test Precision,0.0000
+Test Recall,0.0000
+Test F1,0.0000
+Test ROC-AUC,0.6560

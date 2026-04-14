@@ -1,0 +1,16 @@
+{
+  "FAANG_Probability": 0.0516,
+  "Interview_Rounds_Pred": 1,
+  "Best_Classifier": "Logistic Regression",
+  "Classifier_AUC": 0.656,
+  "Best_Regressor": "XGB Regressor",
+  "Top_Gaps": [
+    "DSA \u2014 LeetCode Mediums",
+    "DSA \u2014 Hard Problems",
+    "Internship Quality",
+    "Mock Interviews",
+    "Project Portfolio",
+    "Open Source Contributions"
+  ],
+  "Overall_Prep_Score": 51.66
+}

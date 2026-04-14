@@ -1,4 +1,4 @@
-# Research Vault
+﻿# Research Vault
 
 The algorithmic and scientific research repository for advanced computational work.
 
@@ -8,6 +8,7 @@ The algorithmic and scientific research repository for advanced computational wo
 - Theoretical/Computational Physics
 
 ## Vault Structure
+- [FAANG_Interview](./FAANG_Interview): FAANG interview package (paper, visuals, dataset snapshot, models).
 - [Kinematic_Genomics_Atlas](./Kinematic_Genomics_Atlas): primary kinematic genomics datasets, docs, and visualizations.
 - [Bioinformatics](./Bioinformatics): sequence processing and bioinformatics modules.
 - [Research_Papers](./Research_Papers): paper packages, reviews, and publication artifacts.
@@ -29,3 +30,4 @@ The algorithmic and scientific research repository for advanced computational wo
 
 ---
 Classification: Private / Proprietary
+
