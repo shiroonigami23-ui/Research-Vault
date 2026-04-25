@@ -1,6 +1,6 @@
 ﻿# Research Vault
 
-The algorithmic and scientific research repository for advanced computational work.
+The algorithmic and scientific research repository for advanced structure and computational work.
 
 ## Focus Areas
 - Computational Biology
