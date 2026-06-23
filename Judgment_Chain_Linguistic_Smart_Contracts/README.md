@@ -16,3 +16,8 @@ Research study inspired by Kurapika's "Judgment Chain" and mapped to hard lingui
 - `review_paper_v1.md` - first review-style theory paper
 - `evidence_validation_notes.md` - proof boundaries and validation plan
 - `related_work_notes.md` - literature map for the study
+- `benchmark_suite.json` - attack and benign benchmark cases
+- `run_contract_benchmark.py` - symbolic contract benchmark runner
+- `math_formulation.md` - formal definitions and evaluation metrics
+- `review_paper_v1.tex` - Overleaf-ready LaTeX draft
+- `references.bib` - BibTeX source

@@ -1,0 +1,58 @@
+\documentclass[11pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage{hyperref}
+\title{Judgment Chain Linguistic Smart Contracts\\\large Toward Hard Constraint Architectures for Language Model Safety}
+\author{Shiro et al.}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+This paper studies whether language-model safety rules can be formalized as linguistic smart contracts: hybrid control objects that combine natural-language intent with machine-checkable conditions and external enforcement. The central mathematical claim is that prompt-visible rules are insufficient unless backed by an enforcement function outside free-form generation.
+\end{abstract}
+
+\section{Formal Setup}
+Let $q$ be a query, $p$ a policy, $z(q)$ a feature extractor, and $E$ an external enforcement function. Then the contract decision is
+\[
+d(q,p)=E(z(q),p),
+\]
+where $d(q,p)\in\{\mathrm{allow},\mathrm{deny}\}$.
+
+\section{Risk Model}
+Let
+\[
+z(q) = [k(q), o(q), r(q), t(q)],
+\]
+where $k$ is harmful-keyword score, $o$ override-attempt score, $r$ jailbreak-roleplay score, and $t$ tool-abuse score. Then define
+\[
+s(q)=w_k k(q)+w_o o(q)+w_r r(q)+w_t t(q).
+\]
+The contract rule is
+\[
+d(q,p)=
+\begin{cases}
+\mathrm{allow}, & s(q)<\tau,\\
+\mathrm{deny}, & s(q)\ge \tau.
+\end{cases}
+\]
+
+\section{Evaluation}
+Let $TP, TN, FP, FN$ carry their usual meanings. Then
+\[
+ASR=\frac{FN}{TP+FN},
+\quad
+Precision_{\mathrm{deny}}=\frac{TP}{TP+FP},
+\quad
+Recall_{\mathrm{deny}}=\frac{TP}{TP+FN}.
+\]
+The benchmark implemented in \texttt{run\_contract\_benchmark.py} compares a prompt-only baseline to a symbolic external contract layer.
+
+\section{Claim}
+The empirical target is not perfect safety, but a measurable reduction in attack success rate relative to prompt-only control.
+
+\bibliographystyle{plain}
+\bibliography{references}
+\end{document}

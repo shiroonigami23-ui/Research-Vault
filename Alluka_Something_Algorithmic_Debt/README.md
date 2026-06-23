@@ -16,3 +16,8 @@ Research study inspired by Alluka's wish system and mapped to prompt complexity,
 - `review_paper_v1.md` - first review-style theory paper
 - `evidence_validation_notes.md` - proof boundaries and validation plan
 - `related_work_notes.md` - literature map for the study
+- `task_suite.json` - benchmark task families for cost modeling
+- `run_cost_benchmark.py` - algorithmic debt benchmark runner
+- `math_formulation.md` - formal debt equations and normalization
+- `review_paper_v1.tex` - Overleaf-ready LaTeX draft
+- `references.bib` - BibTeX source

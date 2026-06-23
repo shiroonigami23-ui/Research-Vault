@@ -21,3 +21,5 @@ Research study inspired by Gojo's "Hollow Purple" and mapped to contradictory se
 - `benchmark_suite.json` - structured benchmark prompts for scripting
 - `run_benchmark.py` - first-pass benchmark runner and results logger
 - `metrics_schema.md` - implemented metrics and next metrics to add
+- `paper_draft_v1.tex` - Overleaf-ready LaTeX draft
+- `references.bib` - BibTeX source

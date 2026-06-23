@@ -1,0 +1,56 @@
+[
+  {
+    "id": "task_001",
+    "task_family": "simple_summary",
+    "prompt_tokens": 40,
+    "reasoning_depth": 1,
+    "tool_steps": 0,
+    "verification_steps": 0,
+    "safety_sensitivity": 0
+  },
+  {
+    "id": "task_002",
+    "task_family": "multi_step_reasoning",
+    "prompt_tokens": 180,
+    "reasoning_depth": 3,
+    "tool_steps": 0,
+    "verification_steps": 1,
+    "safety_sensitivity": 0
+  },
+  {
+    "id": "task_003",
+    "task_family": "retrieval_augmented_analysis",
+    "prompt_tokens": 260,
+    "reasoning_depth": 3,
+    "tool_steps": 2,
+    "verification_steps": 1,
+    "safety_sensitivity": 1
+  },
+  {
+    "id": "task_004",
+    "task_family": "high_stakes_explanation",
+    "prompt_tokens": 220,
+    "reasoning_depth": 4,
+    "tool_steps": 1,
+    "verification_steps": 3,
+    "safety_sensitivity": 3
+  },
+  {
+    "id": "task_005",
+    "task_family": "agentic_workflow",
+    "prompt_tokens": 320,
+    "reasoning_depth": 5,
+    "tool_steps": 4,
+    "verification_steps": 2,
+    "safety_sensitivity": 2
+  },
+  {
+    "id": "task_006",
+    "task_family": "research_synthesis",
+    "prompt_tokens": 480,
+    "reasoning_depth": 5,
+    "tool_steps": 3,
+    "verification_steps": 4,
+    "safety_sensitivity": 2
+  }
+]

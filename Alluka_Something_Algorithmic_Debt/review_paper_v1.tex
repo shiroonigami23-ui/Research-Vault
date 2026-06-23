@@ -1,0 +1,48 @@
+\documentclass[11pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage{hyperref}
+\title{Alluka Something Algorithmic Debt\\\large Prompt Complexity, Test-Time Compute, and Safety Overhead}
+\author{Shiro et al.}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+This paper proposes algorithmic debt as a quantitative model of prompt burden in language systems. The key claim is that the true cost of a request includes direct inference, repeated sampling, verification, retrieval, and safety overhead, and may therefore grow nonlinearly with task ambition.
+\end{abstract}
+
+\section{Mathematical Setup}
+Let $x$ be a task prompt. Define prompt token count $T(x)$, reasoning depth $D(x)$, tool-use steps $U(x)$, verification steps $V(x)$, and safety sensitivity $S(x)$.
+
+\subsection{Debt Components}
+\[
+I(x)=\alpha \log(1+T(x))+\beta D(x)
+\]
+\[
+O(x)=\gamma U(x)+\delta V(x)
+\]
+\[
+H(x)=\epsilon S(x)+\zeta D(x)S(x)
+\]
+
+\subsection{Total Algorithmic Debt}
+\[
+AD(x)=I(x)+O(x)+H(x)+\eta U(x)V(x)
+\]
+and normalized debt
+\[
+NAD(x)=\frac{AD(x)}{\log(2+T(x))}.
+\]
+
+\section{Evaluation}
+The implemented benchmark in \texttt{run\_cost\_benchmark.py} computes debt for a task suite spanning simple summaries, high-stakes explanations, and agentic workflows.
+
+\section{Claim}
+If $NAD(x)$ rises with reasoning, verification, and safety demands faster than with token count alone, then prompt burden cannot be modeled by tokens alone.
+
+\bibliographystyle{plain}
+\bibliography{references}
+\end{document}
