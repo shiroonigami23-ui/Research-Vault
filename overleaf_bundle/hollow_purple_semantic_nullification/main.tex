@@ -1,0 +1,65 @@
+\documentclass[11pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{booktabs}
+\usepackage{hyperref}
+\usepackage{enumitem}
+\title{Hollow Purple Semantic Nullification\\\large Contradictory Semantic Composition, Uncertainty, and Representational Stress in Large Language Models}
+\author{Shiro et al.}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+We study whether tightly coupled semantic contradictions induce a measurable instability regime in large language models. We call this regime semantic nullification: not literal model failure, but a reproducible reduction in representational coherence under mutually exclusive semantic pressure. Building on prior work in antonymy, contradiction benchmarks, uncertainty estimation, and interpretability, we define a mathematical framework for quantifying contradiction-induced stress through token entropy, semantic entropy, hidden-state variance, and contradiction-resolution failure. The goal is to convert the original conjecture about antonym collision in shared semantic space into a precise empirical hypothesis.
+\end{abstract}
+
+\section{Introduction}
+Contradiction is often evaluated behaviorally, especially in natural language inference. This paper asks a different question: what happens when contradictory meanings are forced into a shared prompt state during generation? We hypothesize that contradiction can act as a controlled semantic stressor and produce elevated uncertainty, reduced hidden-state stability, and lower output coherence.
+
+\section{Mathematical Formulation}
+Let $x$ denote a prompt, $M$ a language model, and $h_\ell(x)$ the hidden state of $x$ at layer $\ell$.
+
+\subsection{Token Entropy}
+For decoding step $t$, define
+\[
+H_t(x) = - \sum_i p_M(i \mid x, y_{<t}) \log p_M(i \mid x, y_{<t}).
+\]
+The average decoding entropy over $T$ steps is
+\[
+H_{\mathrm{avg}}(x) = \frac{1}{T} \sum_{t=1}^T H_t(x).
+\]
+
+\subsection{Hidden-State Drift}
+Given a control prompt $x_c$ and contradiction prompt $x_k$, define
+\[
+D_\ell(x_c, x_k) = 1 - \cos\big(h_\ell(x_c), h_\ell(x_k)\big).
+\]
+
+\subsection{Semantic Variance}
+Given repeated sampled outputs clustered into semantic groups with masses $q_j$, define
+\[
+SE(x) = -\sum_j q_j \log q_j.
+\]
+
+\subsection{Nullification Index}
+We define a composite study index
+\[
+NI(x) = \alpha H_{\mathrm{avg}}(x) + \beta SE(x) + \gamma V_\ell(P_x) + \delta R(x),
+\]
+where $V_\ell(P_x)$ denotes paraphrase-level hidden-state variance and $R(x)$ denotes contradiction-resolution failure.
+
+\section{Experimental Design}
+We compare coherent controls, mild tension prompts, explicit contradictions, and deep contradictions. The empirical benchmark in \texttt{benchmark\_suite.json} and \texttt{run\_benchmark.py} provides the first-pass measurement scaffold.
+
+\section{Validation}
+The theory is supported if contradiction depth predicts increases in uncertainty and instability beyond ambiguity and prompt difficulty controls. We require convergent signals across entropy, variance, and evaluator-rated coherence.
+
+\section{Conclusion}
+Semantic nullification is not yet proven, but it is mathematically specifiable and empirically testable.
+
+\bibliographystyle{plain}
+\bibliography{references}
+\end{document}
+

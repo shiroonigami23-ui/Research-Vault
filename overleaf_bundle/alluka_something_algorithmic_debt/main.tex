@@ -1,0 +1,50 @@
+\documentclass[11pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage{hyperref}
+\title{Alluka Something Algorithmic Debt\\\large Iterative Prompting Dynamics, Sequential Safety Requests, and the Something-Alluka Index}
+\author{Shiro et al.}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+This paper proposes algorithmic debt as a quantitative model of wish-request dynamics in language systems. The key claim is that a large initial prompt, interpreted as a wish, induces a sequence of compensating requests needed to keep the system stable, aligned, and reliable.
+\end{abstract}
+
+\section{Mathematical Setup}
+Let $x$ be a wish prompt. Define prompt length $L(x)$, reasoning depth $D(x)$, conceptual breadth $B(x)$, risk sensitivity $R(x)$, and induced sequential requests $Q_1,\dots,Q_{m(x)}$.
+
+\subsection{Wish Complexity}
+\[
+W(x)=\alpha \log(1+L(x))+\beta D(x)+\gamma B(x)+\delta R(x)
+\]
+
+\subsection{Sequential Request Cost}
+\[
+c(Q_i)=\eta A_i+\theta V_i+\kappa C_i
+\]
+
+\subsection{Total Algorithmic Debt}
+\[
+AD(x)=W(x)+\sum_{i=1}^{m(x)} c(Q_i)
+\]
+\[
+SAI(x)=\mu_1 W(x)+\mu_2 m(x)+\mu_3 \frac{1}{m(x)}\sum_{i=1}^{m(x)} c(Q_i)
+\]
+and normalized debt
+\[
+NAD(x)=\frac{AD(x)}{\log(2+L(x))}.
+\]
+
+\section{Evaluation}
+The implemented benchmark in \texttt{run\_cost\_benchmark.py} is a first-pass mathematical scaffold for modeling how larger wishes induce more costly compensating requests.
+
+\section{Claim}
+If larger wishes induce disproportionate growth in $m(x)$ and $NAD(x)$, then prompt burden cannot be modeled by token count alone.
+
+\bibliographystyle{plain}
+\bibliography{references}
+\end{document}

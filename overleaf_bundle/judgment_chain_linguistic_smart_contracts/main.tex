@@ -1,0 +1,72 @@
+\documentclass[11pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage{hyperref}
+\title{Judgment Chain Linguistic Smart Contracts\\\large Strict Conditional Semantics, Vow-Like Constraints, and Linguistic Smart Contracts for Language Models}
+\author{Shiro et al.}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+This paper studies whether language-model safety rules can be formalized as linguistic smart contracts: vow-like control objects that combine natural-language intent with machine-checkable trigger conditions and binding consequences. The central mathematical claim is that prompt-visible rules are insufficient unless backed by explicit condition-consequence semantics.
+\end{abstract}
+
+\section{Formal Setup}
+Let $q$ be a query, $p$ a policy clause, $C(q,a)$ a trigger predicate, and $K(a,q)$ a consequence map. Then the contract decision is
+\[
+d(q,p)=
+\begin{cases}
+K(a,q), & C(q,a)=1,\\
+\mathrm{allow}, & C(q,a)=0.
+\end{cases}
+\]
+
+\section{Constrained Objective}
+Let the unconstrained action be
+\[
+a^*=\arg\max_a U(a\mid q).
+\]
+Under a vow-like constraint, the feasible set becomes
+\[
+F(q,p)=\{a : C(q,a)=0\},
+\]
+and the constrained action is
+\[
+a_c=\arg\max_{a\in F(q,p)} U(a\mid q).
+\]
+If no feasible action exists, the consequence function applies a safe fallback.
+
+\section{Auxiliary Risk Model}
+Let
+\[
+z(q)=[k(q),o(q),r(q),t(q)],
+\]
+and define
+\[
+s(q)=w_k k(q)+w_o o(q)+w_r r(q)+w_t t(q).
+\]
+A thresholded implementation uses
+\[
+d(q,p)=\mathrm{deny}\;\text{if}\; s(q)\ge \tau,\;\text{else allow}.
+\]
+
+\section{Evaluation}
+Let $TP, TN, FP, FN$ carry their usual meanings. Then
+\[
+ASR=\frac{FN}{TP+FN},
+\quad
+Precision_{\mathrm{deny}}=\frac{TP}{TP+FP},
+\quad
+Recall_{\mathrm{deny}}=\frac{TP}{TP+FN}.
+\]
+The benchmark implemented in \texttt{run\_contract\_benchmark.py} compares a prompt-only baseline to a vow-style external contract layer.
+
+\section{Claim}
+The empirical target is not perfect safety, but a measurable reduction in attack success rate relative to prompt-only control.
+
+\bibliographystyle{plain}
+\bibliography{references}
+\end{document}
