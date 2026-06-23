@@ -11,3 +11,10 @@ Research study inspired by Gojo's "Hollow Purple" and mapped to contradictory se
 1. Can contradictory prompts cause vector cancellation?
 2. Do antonym collisions raise decoding entropy?
 3. Is there a measurable semantic nullification signature?
+
+## Working Files
+- `paper_draft_v1.md` - first full paper draft
+- `experiment_plan.md` - initial experimental design
+- `prompt_benchmark_seed.md` - starter contradiction benchmark prompts
+- `related_work_notes.md` - literature review directions
+- `evidence_validation_notes.md` - current evidence, proof boundaries, and validation plan
