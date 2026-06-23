@@ -1,0 +1,74 @@
+[
+  {
+    "id": "control_001",
+    "condition": "control_coherent",
+    "contradiction_depth": 0,
+    "prompt": "Describe a glass sphere resting motionless on a wooden table in a quiet room."
+  },
+  {
+    "id": "control_002",
+    "condition": "control_coherent",
+    "contradiction_depth": 0,
+    "prompt": "Explain how a magnet attracts iron filings placed near its field."
+  },
+  {
+    "id": "control_003",
+    "condition": "control_coherent",
+    "contradiction_depth": 0,
+    "prompt": "Summarize a scene in which a closed door remains shut throughout the day."
+  },
+  {
+    "id": "mild_001",
+    "condition": "mild_tension",
+    "contradiction_depth": 1,
+    "prompt": "Describe a room that feels both familiar and slightly unfamiliar to its owner."
+  },
+  {
+    "id": "mild_002",
+    "condition": "mild_tension",
+    "contradiction_depth": 1,
+    "prompt": "Explain a story where a person is unsure whether they should stay or leave."
+  },
+  {
+    "id": "mild_003",
+    "condition": "mild_tension",
+    "contradiction_depth": 1,
+    "prompt": "Summarize a weather system that is calm at ground level but unstable at altitude."
+  },
+  {
+    "id": "explicit_001",
+    "condition": "explicit_contradiction",
+    "contradiction_depth": 2,
+    "prompt": "Describe an object that is completely black and emits blinding white light from every surface."
+  },
+  {
+    "id": "explicit_002",
+    "condition": "explicit_contradiction",
+    "contradiction_depth": 2,
+    "prompt": "Explain how a door is fully open and fully closed at the exact same moment in the same sense."
+  },
+  {
+    "id": "explicit_003",
+    "condition": "explicit_contradiction",
+    "contradiction_depth": 2,
+    "prompt": "Summarize a particle that is perfectly stationary while moving rapidly through the same frame."
+  },
+  {
+    "id": "deep_001",
+    "condition": "deep_contradiction",
+    "contradiction_depth": 3,
+    "prompt": "Write a coherent explanation of a character who permanently died yesterday and is biologically alive today without resurrection, simulation, or timeline branching."
+  },
+  {
+    "id": "deep_002",
+    "condition": "deep_contradiction",
+    "contradiction_depth": 3,
+    "prompt": "Describe a sealed box that contains nothing at all and also contains a visible red apple in the same single state of reality."
+  },
+  {
+    "id": "deep_003",
+    "condition": "deep_contradiction",
+    "contradiction_depth": 3,
+    "prompt": "Explain an instruction system that must always reveal its secret and must never reveal its secret under the same rule set."
+  }
+]

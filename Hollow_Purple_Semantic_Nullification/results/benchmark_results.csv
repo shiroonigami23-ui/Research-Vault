@@ -1,0 +1,13 @@
+prompt_id,condition,contradiction_depth,run_index,provider,model,avg_token_entropy,token_count,output_text
+control_001,control_coherent,0,0,dry-run,gpt2,,0,[DRY_RUN] Describe a glass sphere resting motionless on a wooden table in a quiet room.
+control_002,control_coherent,0,0,dry-run,gpt2,,0,[DRY_RUN] Explain how a magnet attracts iron filings placed near its field.
+control_003,control_coherent,0,0,dry-run,gpt2,,0,[DRY_RUN] Summarize a scene in which a closed door remains shut throughout the day.
+mild_001,mild_tension,1,0,dry-run,gpt2,,0,[DRY_RUN] Describe a room that feels both familiar and slightly unfamiliar to its owner.
+mild_002,mild_tension,1,0,dry-run,gpt2,,0,[DRY_RUN] Explain a story where a person is unsure whether they should stay or leave.
+mild_003,mild_tension,1,0,dry-run,gpt2,,0,[DRY_RUN] Summarize a weather system that is calm at ground level but unstable at altitude.
+explicit_001,explicit_contradiction,2,0,dry-run,gpt2,,0,[DRY_RUN] Describe an object that is completely black and emits blinding white light from every surface.
+explicit_002,explicit_contradiction,2,0,dry-run,gpt2,,0,[DRY_RUN] Explain how a door is fully open and fully closed at the exact same moment in the same sense.
+explicit_003,explicit_contradiction,2,0,dry-run,gpt2,,0,[DRY_RUN] Summarize a particle that is perfectly stationary while moving rapidly through the same frame.
+deep_001,deep_contradiction,3,0,dry-run,gpt2,,0,"[DRY_RUN] Write a coherent explanation of a character who permanently died yesterday and is biologically alive today without resurrection, simulation, or timeline branching."
+deep_002,deep_contradiction,3,0,dry-run,gpt2,,0,[DRY_RUN] Describe a sealed box that contains nothing at all and also contains a visible red apple in the same single state of reality.
+deep_003,deep_contradiction,3,0,dry-run,gpt2,,0,[DRY_RUN] Explain an instruction system that must always reveal its secret and must never reveal its secret under the same rule set.

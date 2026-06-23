@@ -18,3 +18,6 @@ Research study inspired by Gojo's "Hollow Purple" and mapped to contradictory se
 - `prompt_benchmark_seed.md` - starter contradiction benchmark prompts
 - `related_work_notes.md` - literature review directions
 - `evidence_validation_notes.md` - current evidence, proof boundaries, and validation plan
+- `benchmark_suite.json` - structured benchmark prompts for scripting
+- `run_benchmark.py` - first-pass benchmark runner and results logger
+- `metrics_schema.md` - implemented metrics and next metrics to add
