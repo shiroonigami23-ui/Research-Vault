@@ -8,9 +8,10 @@ The algorithmic and scientific research repository for advanced structure and co
 - [Alluka_Something_Algorithmic_Debt](./Alluka_Something_Algorithmic_Debt): wish complexity, sequential request debt, and the Something-Alluka Index for iterative prompting dynamics.
 
 ## Research Rigor
-- [SHARED_THEOREM_FRAMEWORK](./SHARED_THEOREM_FRAMEWORK.md): common assumptions, proposition template, falsifier standards, and evidence-vs-proof rules across the three studies.
+- [SHARED_THEOREM_FRAMEWORK](./SHARED_THEOREM_FRAMEWORK.md): minimal repo-wide research standard only.
 - Each active study now includes proof obligations and publication-facing LaTeX entrypoints.
 - Each active study keeps its own `submission_package/` folder for upload-ready LaTeX sources.
+- Most rigor now lives inside each study rather than in a heavy shared framework.
 
 ## Focus Areas
 - Computational Biology
