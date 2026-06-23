@@ -6,4 +6,9 @@ __pycache__/
 *.toc
 *.bbl
 *.blg
-overleaf_bundle/*/main.pdf
+*/submission_package/main.pdf
+*/submission_package/main.aux
+*/submission_package/main.bbl
+*/submission_package/main.blg
+*/submission_package/main.log
+*/submission_package/main.out

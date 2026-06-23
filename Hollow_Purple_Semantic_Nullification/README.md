@@ -23,3 +23,5 @@ Research study inspired by Gojo's "Hollow Purple" and mapped to contradictory se
 - `metrics_schema.md` - implemented metrics and next metrics to add
 - `paper_draft_v1.tex` - Overleaf-ready LaTeX draft
 - `references.bib` - BibTeX source
+- `proof_obligations.md` - defendable claims, open proof burden, and falsifiers
+- `submission_package/` - upload-ready LaTeX package for this paper only

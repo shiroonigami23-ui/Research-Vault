@@ -21,3 +21,5 @@ Research study inspired by Kurapika's "Judgment Chain" and mapped to hard lingui
 - `math_formulation.md` - formal definitions and evaluation metrics
 - `review_paper_v1.tex` - Overleaf-ready LaTeX draft
 - `references.bib` - BibTeX source
+- `proof_obligations.md` - defendable claims, open proof burden, and falsifiers
+- `submission_package/` - upload-ready LaTeX package for this paper only

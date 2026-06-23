@@ -3,9 +3,14 @@
 The algorithmic and scientific research repository for advanced structure and computational work.
 
 ## New Active Studies
-- [Hollow_Purple_Semantic_Nullification](./Hollow_Purple_Semantic_Nullification): contradictory semantic composition and representational collapse in language models.
-- [Judgment_Chain_Linguistic_Smart_Contracts](./Judgment_Chain_Linguistic_Smart_Contracts): strict rule enforcement, jailbreak resistance, and policy logic for AI systems.
-- [Alluka_Something_Algorithmic_Debt](./Alluka_Something_Algorithmic_Debt): prompt complexity, compute burden, and safety-overhead scaling.
+- [Hollow_Purple_Semantic_Nullification](./Hollow_Purple_Semantic_Nullification): semantic antonym collision, contradiction depth, and nullification-style instability in language models.
+- [Judgment_Chain_Linguistic_Smart_Contracts](./Judgment_Chain_Linguistic_Smart_Contracts): strict trigger-consequence semantics, vow-like constraints, and linguistic smart contracts for AI systems.
+- [Alluka_Something_Algorithmic_Debt](./Alluka_Something_Algorithmic_Debt): wish complexity, sequential request debt, and the Something-Alluka Index for iterative prompting dynamics.
+
+## Research Rigor
+- [SHARED_THEOREM_FRAMEWORK](./SHARED_THEOREM_FRAMEWORK.md): common assumptions, proposition template, falsifier standards, and evidence-vs-proof rules across the three studies.
+- Each active study now includes proof obligations and publication-facing LaTeX entrypoints.
+- Each active study keeps its own `submission_package/` folder for upload-ready LaTeX sources.
 
 ## Focus Areas
 - Computational Biology
@@ -32,6 +37,7 @@ The algorithmic and scientific research repository for advanced structure and co
 ## Notes
 - Keep publication artifacts grouped by paper/version in dedicated subfolders.
 - Prefer versioned filenames for every major revision.
+- Keep submission-ready LaTeX files inside the relevant study folder rather than at repo root.
 
 ---
 Classification: Private / Proprietary

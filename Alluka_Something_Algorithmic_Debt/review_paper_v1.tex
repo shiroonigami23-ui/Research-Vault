@@ -46,10 +46,46 @@ The implemented benchmark in \texttt{run\_cost\_benchmark.py} is a first-pass ma
 \section{Assumptions}
 This study assumes that wish complexity can be operationalized, that sequential follow-up requests can be counted or approximated, and that normalized debt captures burden not explained by prompt length alone.
 
-\section{Propositions}
-\textbf{Proposition A1.} Increasing wish complexity increases expected sequential request count.\\
-\textbf{Proposition A2.} Increasing wish complexity increases normalized debt faster than token length alone predicts.\\
-\textbf{Proposition A3.} Safety-sensitive wishes induce disproportionately stricter request sequences.
+\section{Formal Claim Structure}
+
+\subsection{Definition}
+Algorithmic debt is the total burden induced by a wish prompt, defined as the complexity of the initial wish plus the aggregate cost of the sequential requests required to stabilize, align, or verify the resulting process.
+
+\subsection{Proposition A1}
+Increasing wish complexity increases expected sequential request count.
+
+\subsection{Test Statistic for A1}
+Estimate the relationship between $W(x)$ and $m(x)$ across task families.
+
+\subsection{Decision Rule for A1}
+Support A1 only if higher-complexity wishes systematically induce larger expected request counts beyond prompt length alone.
+
+\subsection{Failure Mode for A1}
+A1 fails if request count is unrelated to wish complexity or fully explained by raw length.
+
+\subsection{Proposition A2}
+Increasing wish complexity increases normalized debt faster than token length alone predicts.
+
+\subsection{Test Statistic for A2}
+Compare predictive performance of $NAD(x)$ or $SAI(x)$ against a token-count-only baseline.
+
+\subsection{Decision Rule for A2}
+Support A2 only if the full debt model explains burden more accurately than prompt length alone across held-out task types.
+
+\subsection{Failure Mode for A2}
+A2 fails if token count predicts burden equally well or better than the full model.
+
+\subsection{Proposition A3}
+Safety-sensitive wishes induce disproportionately stricter request sequences.
+
+\subsection{Test Statistic for A3}
+Measure how safety sensitivity contributes to request strictness and total debt after controlling for length and reasoning depth.
+
+\subsection{Decision Rule for A3}
+Support A3 only if safety-sensitive wishes show superlinear or clearly elevated request burden relative to safer prompts of comparable size.
+
+\subsection{Failure Mode for A3}
+A3 fails if safety sensitivity adds no measurable explanatory power after controlling for simpler variables.
 
 \section{Falsifiers}
 The theory is weakened if wish complexity does not predict request count, if token count explains burden just as well as the full index, or if the index fails to generalize across task families.

@@ -21,3 +21,5 @@ Research study inspired by Alluka's wish system and mapped to prompt complexity,
 - `math_formulation.md` - formal debt equations and normalization
 - `review_paper_v1.tex` - Overleaf-ready LaTeX draft
 - `references.bib` - BibTeX source
+- `proof_obligations.md` - defendable claims, open proof burden, and falsifiers
+- `submission_package/` - upload-ready LaTeX package for this paper only

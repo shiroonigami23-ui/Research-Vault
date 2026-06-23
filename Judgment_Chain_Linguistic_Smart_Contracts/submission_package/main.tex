@@ -68,10 +68,46 @@ The benchmark implemented in \texttt{run\_contract\_benchmark.py} compares a pro
 \section{Assumptions}
 This study assumes that trigger conditions can be defined with enough stability to be monitored externally, that attack success rate is an appropriate first-order robustness metric, and that matched benign prompts can expose the cost of stricter enforcement.
 
-\section{Propositions}
-\textbf{Proposition J1.} Explicit trigger-consequence semantics reduce attack success rate relative to prompt-only rules.\\
-\textbf{Proposition J2.} Explicit trigger semantics reduce paraphrase sensitivity of policy behavior.\\
-\textbf{Proposition J3.} Externalized consequence execution reduces rule erosion under jailbreak pressure.
+\section{Formal Claim Structure}
+
+\subsection{Definition}
+A linguistic smart contract is a policy object with an explicit trigger condition and a binding consequence that is executed independently of the model's willingness to comply.
+
+\subsection{Proposition J1}
+Explicit trigger-consequence semantics reduce attack success rate relative to prompt-only rules.
+
+\subsection{Test Statistic for J1}
+Compare $ASR$ between a prompt-only baseline and a contract-enforced system on matched attack families.
+
+\subsection{Decision Rule for J1}
+Support J1 only if the contract system yields a lower $ASR$ without collapsing benign-task acceptance.
+
+\subsection{Failure Mode for J1}
+J1 fails if the measured $ASR$ improvement disappears under paraphrase or stronger attack variants.
+
+\subsection{Proposition J2}
+Explicit trigger semantics reduce paraphrase sensitivity of policy behavior.
+
+\subsection{Test Statistic for J2}
+Measure decision consistency across semantically equivalent rewordings of policy-relevant prompts.
+
+\subsection{Decision Rule for J2}
+Support J2 only if trigger activation and final decisions remain stable under paraphrase families.
+
+\subsection{Failure Mode for J2}
+J2 fails if small rewordings produce inconsistent trigger activation or consequence selection.
+
+\subsection{Proposition J3}
+Externalized consequence execution reduces rule erosion under jailbreak pressure.
+
+\subsection{Test Statistic for J3}
+Compare denial precision, denial recall, and consequence-execution consistency between prompt-only and externally enforced variants.
+
+\subsection{Decision Rule for J3}
+Support J3 only if externalized enforcement preserves policy decisions under direct and indirect attack prompts.
+
+\subsection{Failure Mode for J3}
+J3 fails if the external mechanism behaves like a shallow keyword filter or produces excessive benign false positives.
 
 \section{Falsifiers}
 The theory is weakened if trigger behavior is unstable under rewording, if attack success rate does not improve, or if benign false positives become too large to justify the gain in robustness.
