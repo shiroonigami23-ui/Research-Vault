@@ -1,6 +1,11 @@
-﻿# Research Vault
+# Research Vault
 
 The algorithmic and scientific research repository for advanced structure and computational work.
+
+## New Active Studies
+- [Hollow_Purple_Semantic_Nullification](./Hollow_Purple_Semantic_Nullification): contradictory semantic composition and representational collapse in language models.
+- [Judgment_Chain_Linguistic_Smart_Contracts](./Judgment_Chain_Linguistic_Smart_Contracts): strict rule enforcement, jailbreak resistance, and policy logic for AI systems.
+- [Alluka_Something_Algorithmic_Debt](./Alluka_Something_Algorithmic_Debt): prompt complexity, compute burden, and safety-overhead scaling.
 
 ## Focus Areas
 - Computational Biology
@@ -30,4 +35,5 @@ The algorithmic and scientific research repository for advanced structure and co
 
 ---
 Classification: Private / Proprietary
+
 
