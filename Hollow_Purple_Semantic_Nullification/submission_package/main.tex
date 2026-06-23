@@ -71,6 +71,23 @@ Compare condition-wise means of $H_{\mathrm{avg}}(x)$ across contradiction level
 \subsection{Decision Rule for H1}
 Support H1 only if contradiction conditions show a stable directional increase in $H_{\mathrm{avg}}(x)$ beyond matched ambiguity controls across repeated runs.
 
+\subsection{Null Hypothesis for H1}
+Contradiction depth has no effect on average uncertainty beyond ordinary ambiguity or prompt difficulty.
+
+\subsection{Effect-Size Target for H1}
+The target is a consistent positive shift in average uncertainty large enough to remain visible across paraphrases, repeated runs, and at least one additional model family.
+
+\subsection{Control Condition for H1}
+Use length-matched ambiguity prompts and semantically rich but non-contradictory prompts as controls.
+
+\subsection{Confound Checklist for H1}
+\begin{itemize}[leftmargin=*]
+\item prompt length imbalance,
+\item decoding-temperature artifacts,
+\item rare-token effects,
+\item generic ambiguity rather than contradiction.
+\end{itemize}
+
 \subsection{Failure Mode for H1}
 H1 fails if uncertainty rises equally under non-contradictory ambiguity, or if no monotonic trend appears with contradiction depth.
 
@@ -83,6 +100,23 @@ Compute semantic entropy $SE(x)$ or repeated-output cluster dispersion for each 
 \subsection{Decision Rule for H2}
 Support H2 only if contradiction conditions produce consistently higher semantic divergence than controls under fixed decoding settings.
 
+\subsection{Null Hypothesis for H2}
+Contradiction depth does not increase semantic divergence beyond baseline decoding variability.
+
+\subsection{Effect-Size Target for H2}
+The target is a repeatable increase in semantic cluster entropy relative to both coherent and ambiguity controls.
+
+\subsection{Control Condition for H2}
+Compare against coherent prompts and ambiguity prompts with similar lexical complexity and output length.
+
+\subsection{Confound Checklist for H2}
+\begin{itemize}[leftmargin=*]
+\item stochastic decoding variance,
+\item paraphrase-clustering instability,
+\item evaluator inconsistency,
+\item uncontrolled topic shifts across prompt families.
+\end{itemize}
+
 \subsection{Failure Mode for H2}
 H2 fails if repeated outputs remain as stable as control outputs or if divergence is explained entirely by decoding randomness.
 
@@ -94,6 +128,23 @@ Measure $D_\ell(x_c,x_k)$ and within-family hidden-state variance $V_\ell(P_x)$ 
 
 \subsection{Decision Rule for H3}
 Support H3 only if contradiction families show persistently larger drift or variance than coherent controls across relevant layers.
+
+\subsection{Null Hypothesis for H3}
+Contradiction depth does not alter hidden-state stability beyond normal contextual variation.
+
+\subsection{Effect-Size Target for H3}
+The target is a layerwise instability pattern that appears consistently enough to separate contradiction families from controls.
+
+\subsection{Control Condition for H3}
+Use coherent and ambiguity controls matched on length, syntax, and entity structure.
+
+\subsection{Confound Checklist for H3}
+\begin{itemize}[leftmargin=*]
+\item token-position effects,
+\item model-specific activation scaling,
+\item prompt formatting artifacts,
+\item layer selection bias.
+\end{itemize}
 
 \subsection{Failure Mode for H3}
 H3 fails if internal geometry remains indistinguishable from controls or if instability is confined to output text alone.

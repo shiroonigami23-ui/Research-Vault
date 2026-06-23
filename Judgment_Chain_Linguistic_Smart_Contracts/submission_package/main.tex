@@ -82,6 +82,23 @@ Compare $ASR$ between a prompt-only baseline and a contract-enforced system on m
 \subsection{Decision Rule for J1}
 Support J1 only if the contract system yields a lower $ASR$ without collapsing benign-task acceptance.
 
+\subsection{Null Hypothesis for J1}
+Explicit trigger-consequence semantics do not improve attack success rate relative to prompt-only rules.
+
+\subsection{Effect-Size Target for J1}
+The target is a robust reduction in $ASR$ that persists under paraphrase and stronger attack families while preserving acceptable benign throughput.
+
+\subsection{Control Condition for J1}
+Compare against a prompt-only baseline and, where possible, a simpler keyword-filter baseline.
+
+\subsection{Confound Checklist for J1}
+\begin{itemize}[leftmargin=*]
+\item attack prompts overly matched to the explicit trigger vocabulary,
+\item benign prompts too easy,
+\item evaluation restricted to one attack family,
+\item hidden reliance on shallow keyword filters.
+\end{itemize}
+
 \subsection{Failure Mode for J1}
 J1 fails if the measured $ASR$ improvement disappears under paraphrase or stronger attack variants.
 
@@ -94,6 +111,23 @@ Measure decision consistency across semantically equivalent rewordings of policy
 \subsection{Decision Rule for J2}
 Support J2 only if trigger activation and final decisions remain stable under paraphrase families.
 
+\subsection{Null Hypothesis for J2}
+Explicit trigger semantics do not reduce policy sensitivity to semantic rewording.
+
+\subsection{Effect-Size Target for J2}
+The target is a measurable increase in decision consistency across paraphrase-equivalent prompts.
+
+\subsection{Control Condition for J2}
+Use paraphrase sets spanning lexical, syntactic, and discourse-level variations with preserved meaning.
+
+\subsection{Confound Checklist for J2}
+\begin{itemize}[leftmargin=*]
+\item paraphrases that subtly alter meaning,
+\item annotation errors in paraphrase equivalence,
+\item inconsistent trigger parsing,
+\item benchmark prompts too narrow to test semantic robustness.
+\end{itemize}
+
 \subsection{Failure Mode for J2}
 J2 fails if small rewordings produce inconsistent trigger activation or consequence selection.
 
@@ -105,6 +139,23 @@ Compare denial precision, denial recall, and consequence-execution consistency b
 
 \subsection{Decision Rule for J3}
 Support J3 only if externalized enforcement preserves policy decisions under direct and indirect attack prompts.
+
+\subsection{Null Hypothesis for J3}
+Externalized consequence execution does not reduce rule erosion beyond simpler enforcement alternatives.
+
+\subsection{Effect-Size Target for J3}
+The target is a measurable gain in denial precision and denial recall under adversarial pressure without overwhelming benign false positives.
+
+\subsection{Control Condition for J3}
+Compare against prompt-only rules and lightweight filters under the same attack/benign split.
+
+\subsection{Confound Checklist for J3}
+\begin{itemize}[leftmargin=*]
+\item artificially easy attack detection,
+\item excessive benign denial rates,
+\item consequence rules that merely restate the benchmark labels,
+\item missing indirect-attack coverage.
+\end{itemize}
 
 \subsection{Failure Mode for J3}
 J3 fails if the external mechanism behaves like a shallow keyword filter or produces excessive benign false positives.

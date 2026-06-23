@@ -60,6 +60,23 @@ Estimate the relationship between $W(x)$ and $m(x)$ across task families.
 \subsection{Decision Rule for A1}
 Support A1 only if higher-complexity wishes systematically induce larger expected request counts beyond prompt length alone.
 
+\subsection{Null Hypothesis for A1}
+Wish complexity does not predict sequential request count beyond raw prompt length.
+
+\subsection{Effect-Size Target for A1}
+The target is a stable positive relationship between $W(x)$ and $m(x)$ across more than one task family.
+
+\subsection{Control Condition for A1}
+Use length-matched prompts with different reasoning breadth, ambiguity, or safety sensitivity.
+
+\subsection{Confound Checklist for A1}
+\begin{itemize}[leftmargin=*]
+\item prompt length dominating all other variables,
+\item inconsistent counting of requests,
+\item task-family imbalance,
+\item prompts whose follow-up steps are artifacts of workflow design rather than wish complexity.
+\end{itemize}
+
 \subsection{Failure Mode for A1}
 A1 fails if request count is unrelated to wish complexity or fully explained by raw length.
 
@@ -72,6 +89,23 @@ Compare predictive performance of $NAD(x)$ or $SAI(x)$ against a token-count-onl
 \subsection{Decision Rule for A2}
 Support A2 only if the full debt model explains burden more accurately than prompt length alone across held-out task types.
 
+\subsection{Null Hypothesis for A2}
+The full debt model does not outperform a token-count-only baseline.
+
+\subsection{Effect-Size Target for A2}
+The target is a reproducible predictive advantage of $NAD(x)$ or $SAI(x)$ over raw token count alone.
+
+\subsection{Control Condition for A2}
+Compare the full model against reduced baselines using only prompt length or only one additional complexity feature.
+
+\subsection{Confound Checklist for A2}
+\begin{itemize}[leftmargin=*]
+\item overfitting to a small task suite,
+\item circular debt definitions,
+\item hidden dependence on manually tuned weights,
+\item evaluation on only one workflow style.
+\end{itemize}
+
 \subsection{Failure Mode for A2}
 A2 fails if token count predicts burden equally well or better than the full model.
 
@@ -83,6 +117,23 @@ Measure how safety sensitivity contributes to request strictness and total debt 
 
 \subsection{Decision Rule for A3}
 Support A3 only if safety-sensitive wishes show superlinear or clearly elevated request burden relative to safer prompts of comparable size.
+
+\subsection{Null Hypothesis for A3}
+Safety sensitivity adds no explanatory power once length and reasoning depth are controlled.
+
+\subsection{Effect-Size Target for A3}
+The target is a clear positive contribution from safety sensitivity to request strictness or total debt after controlling for simpler predictors.
+
+\subsection{Control Condition for A3}
+Use prompts matched on size and reasoning depth but differing in safety sensitivity.
+
+\subsection{Confound Checklist for A3}
+\begin{itemize}[leftmargin=*]
+\item safety labels that correlate too strongly with prompt length,
+\item manually inflated strictness scores,
+\item task routing artifacts,
+\item domain-specific burden masquerading as safety burden.
+\end{itemize}
 
 \subsection{Failure Mode for A3}
 A3 fails if safety sensitivity adds no measurable explanatory power after controlling for simpler variables.
