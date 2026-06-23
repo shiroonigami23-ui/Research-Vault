@@ -12,7 +12,7 @@
 \maketitle
 
 \begin{abstract}
-This paper studies whether language-model safety rules can be formalized as linguistic smart contracts: vow-like control objects that combine natural-language intent with machine-checkable trigger conditions and binding consequences. The central mathematical claim is that prompt-visible rules are insufficient unless backed by explicit condition-consequence semantics.
+This paper studies whether AI safety rules can be implemented as linguistic smart contracts: trigger-consequence systems that override free generation when a rule is violated. The central claim is that prompt-visible rules alone are too weak.
 \end{abstract}
 
 \section{Formal Setup}
@@ -164,7 +164,7 @@ J3 fails if the external mechanism behaves like a shallow keyword filter or prod
 The theory is weakened if trigger behavior is unstable under rewording, if attack success rate does not improve, or if benign false positives become too large to justify the gain in robustness.
 
 \section{Evidence and Proof Standard}
-Evidence means measurable robustness gains against controlled attack families. Strong evidence requires gains that survive paraphrase, stronger attacks, and benign-utility checks. Proof, in the empirical sense, requires persistent superiority over prompt-only rules without a simpler explanation such as trivial keyword blocking alone.
+Evidence means measurable robustness gains on matched attack sets. Strong evidence requires paraphrase stability, stronger attacks, and benign-utility checks. Proof, in the empirical sense, requires superiority over prompt-only rules without a simpler explanation such as shallow keyword matching.
 
 \nocite{*}
 \bibliographystyle{plain}

@@ -12,7 +12,7 @@
 \maketitle
 
 \begin{abstract}
-This paper proposes algorithmic debt as a quantitative model of wish-request dynamics in language systems. The key claim is that a large initial prompt, interpreted as a wish, induces a sequence of compensating requests needed to keep the system stable, aligned, and reliable.
+This paper proposes algorithmic debt as a quantitative model of wish-request dynamics in language systems. The central claim is that larger wishes induce more costly sequential requests, and that this burden is not captured by prompt length alone.
 \end{abstract}
 
 \section{Mathematical Setup}
@@ -41,7 +41,7 @@ NAD(x)=\frac{AD(x)}{\log(2+L(x))}.
 \]
 
 \section{Evaluation}
-The implemented benchmark in \texttt{run\_cost\_benchmark.py} is a first-pass mathematical scaffold for modeling how larger wishes induce more costly compensating requests.
+The benchmark in \texttt{run\_cost\_benchmark.py} tests whether wish complexity predicts request burden better than prompt length alone.
 
 \section{Assumptions}
 This study assumes that wish complexity can be operationalized, that sequential follow-up requests can be counted or approximated, and that normalized debt captures burden not explained by prompt length alone.
@@ -142,7 +142,7 @@ A3 fails if safety sensitivity adds no measurable explanatory power after contro
 The theory is weakened if wish complexity does not predict request count, if token count explains burden just as well as the full index, or if the index fails to generalize across task families.
 
 \section{Evidence and Proof Standard}
-Evidence means stable predictive value of the Something-Alluka Index beyond raw prompt length. Strong evidence requires replication across task families and controls for prompt size alone. Proof, in the empirical sense, requires that the index consistently explains sequential burden better than simpler alternatives within the tested domain.
+Evidence means stable predictive value beyond raw prompt length. Strong evidence requires replication across task families and matched controls. Proof, in the empirical sense, requires that the index outperforms simpler alternatives within the tested domain.
 
 \nocite{*}
 \bibliographystyle{plain}

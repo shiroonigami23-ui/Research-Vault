@@ -13,11 +13,11 @@
 \maketitle
 
 \begin{abstract}
-We study whether tightly coupled semantic contradictions induce a measurable instability regime in large language models. We call this regime semantic nullification: not literal model failure, but a reproducible reduction in representational coherence under mutually exclusive semantic pressure. Building on prior work in antonymy, contradiction benchmarks, uncertainty estimation, and interpretability, we define a mathematical framework for quantifying contradiction-induced stress through token entropy, semantic entropy, hidden-state variance, and contradiction-resolution failure. The goal is to convert the original conjecture about antonym collision in shared semantic space into a precise empirical hypothesis.
+This paper tests whether contradiction depth produces measurable instability in language models. We define semantic nullification as a contradiction-linked increase in uncertainty, semantic divergence, or representational instability relative to matched controls.
 \end{abstract}
 
 \section{Introduction}
-Contradiction is often evaluated behaviorally, especially in natural language inference. This paper asks a different question: what happens when contradictory meanings are forced into a shared prompt state during generation? We hypothesize that contradiction can act as a controlled semantic stressor and produce elevated uncertainty, reduced hidden-state stability, and lower output coherence.
+This study treats contradiction as a controllable semantic stressor. The central question is whether increasing contradiction depth causes measurable instability beyond ambiguity alone.
 
 \section{Mathematical Formulation}
 Let $x$ denote a prompt, $M$ a language model, and $h_\ell(x)$ the hidden state of $x$ at layer $\ell$.
@@ -52,7 +52,7 @@ NI(x) = \alpha H_{\mathrm{avg}}(x) + \beta SE(x) + \gamma V_\ell(P_x) + \delta R
 where $V_\ell(P_x)$ denotes paraphrase-level hidden-state variance and $R(x)$ denotes contradiction-resolution failure.
 
 \section{Experimental Design}
-We compare coherent controls, mild tension prompts, explicit contradictions, and deep contradictions. The empirical benchmark in \texttt{benchmark\_suite.json} and \texttt{run\_benchmark.py} provides the first-pass measurement scaffold.
+We compare coherent controls, ambiguity controls, explicit contradictions, and deep contradictions using the benchmark in \texttt{benchmark\_suite.json}.
 
 \section{Assumptions}
 This study assumes that contradiction depth is experimentally manipulable, that hidden-state and uncertainty metrics are sensitive to contradiction-induced stress, and that matched ambiguity controls can separate contradiction effects from generic prompt difficulty.
@@ -150,16 +150,16 @@ Use coherent and ambiguity controls matched on length, syntax, and entity struct
 H3 fails if internal geometry remains indistinguishable from controls or if instability is confined to output text alone.
 
 \section{Validation}
-The theory is supported if contradiction depth predicts increases in uncertainty and instability beyond ambiguity and prompt difficulty controls. We require convergent signals across entropy, variance, and evaluator-rated coherence.
+The theory is supported only if contradiction depth predicts instability beyond ambiguity controls across more than one metric.
 
 \section{Falsifiers}
 The theory is weakened if contradiction prompts fail to separate from ambiguity controls, if no monotonic relationship appears across contradiction depth, or if the effect vanishes across models and paraphrases.
 
 \section{Evidence and Proof Standard}
-In this project, evidence means stable metric separation under controls. Strong evidence requires replication across models, paraphrases, and multiple measurement channels. Proof, in the empirical sense, requires that the nullification hypothesis survive these tests without a simpler competing explanation within scope.
+Evidence means stable separation under controls. Strong evidence requires replication across paraphrases, metrics, and models. Proof, in the empirical sense, requires that no simpler explanation survives within scope.
 
 \section{Conclusion}
-Semantic nullification is not yet proven, but it is mathematically specifiable and empirically testable.
+Semantic nullification is not yet proven, but it is now operationally defined and empirically testable.
 
 \nocite{*}
 \bibliographystyle{plain}
