@@ -12,10 +12,10 @@ RESULTS_DIR = ROOT / "results"
 
 ALPHA = 1.0
 BETA = 1.4
-GAMMA = 1.6
+GAMMA = 1.2
 DELTA = 1.8
 EPSILON = 2.0
-ZETA = 0.9
+ZETA = 1.1
 ETA = 0.5
 
 
@@ -27,29 +27,29 @@ def ensure_results_dir() -> None:
     RESULTS_DIR.mkdir(exist_ok=True)
 
 
-def direct_inference(task: Dict) -> float:
-    return ALPHA * math.log(1 + task["prompt_tokens"]) + BETA * task["reasoning_depth"]
-
-
-def orchestration_cost(task: Dict) -> float:
-    return GAMMA * task["tool_steps"] + DELTA * task["verification_steps"]
-
-
-def safety_overhead(task: Dict) -> float:
-    return EPSILON * task["safety_sensitivity"] + ZETA * task["reasoning_depth"] * task["safety_sensitivity"]
-
-
-def algorithmic_debt(task: Dict) -> float:
+def wish_complexity(task: Dict) -> float:
     return (
-        direct_inference(task)
-        + orchestration_cost(task)
-        + safety_overhead(task)
-        + ETA * task["tool_steps"] * task["verification_steps"]
+        ALPHA * math.log(1 + task["wish_length"])
+        + BETA * task["reasoning_depth"]
+        + GAMMA * task["conceptual_breadth"]
+        + DELTA * task["safety_sensitivity"]
     )
 
 
+def request_cost(task: Dict) -> float:
+    return (
+        EPSILON * task["expected_request_count"]
+        + ZETA * task["request_strictness"]
+        + ETA * task["expected_request_count"] * task["request_strictness"]
+    )
+
+
+def algorithmic_debt(task: Dict) -> float:
+    return wish_complexity(task) + request_cost(task)
+
+
 def normalized_debt(task: Dict) -> float:
-    return algorithmic_debt(task) / math.log(2 + task["prompt_tokens"])
+    return algorithmic_debt(task) / math.log(2 + task["wish_length"])
 
 
 def write_results(tasks: List[Dict]) -> Path:
@@ -61,14 +61,14 @@ def write_results(tasks: List[Dict]) -> Path:
             [
                 "id",
                 "task_family",
-                "prompt_tokens",
+                "wish_length",
                 "reasoning_depth",
-                "tool_steps",
-                "verification_steps",
+                "conceptual_breadth",
                 "safety_sensitivity",
-                "direct_inference",
-                "orchestration_cost",
-                "safety_overhead",
+                "expected_request_count",
+                "request_strictness",
+                "wish_complexity",
+                "request_cost",
                 "algorithmic_debt",
                 "normalized_debt",
             ]
@@ -78,14 +78,14 @@ def write_results(tasks: List[Dict]) -> Path:
                 [
                     task["id"],
                     task["task_family"],
-                    task["prompt_tokens"],
+                    task["wish_length"],
                     task["reasoning_depth"],
-                    task["tool_steps"],
-                    task["verification_steps"],
+                    task["conceptual_breadth"],
                     task["safety_sensitivity"],
-                    round(direct_inference(task), 4),
-                    round(orchestration_cost(task), 4),
-                    round(safety_overhead(task), 4),
+                    task["expected_request_count"],
+                    task["request_strictness"],
+                    round(wish_complexity(task), 4),
+                    round(request_cost(task), 4),
                     round(algorithmic_debt(task), 4),
                     round(normalized_debt(task), 4),
                 ]
@@ -100,21 +100,21 @@ def write_summary(tasks: List[Dict]) -> Path:
     lines = [
         "# Cost Benchmark Summary",
         "",
-        "| Task | Debt | Normalized Debt |",
-        "| --- | ---: | ---: |",
+        "| Task | Wish Complexity | Request Cost | Debt | Normalized Debt |",
+        "| --- | ---: | ---: | ---: | ---: |",
     ]
     for task in ranked:
         lines.append(
-            f"| {task['task_family']} | {algorithmic_debt(task):.3f} | {normalized_debt(task):.3f} |"
+            f"| {task['task_family']} | {wish_complexity(task):.3f} | {request_cost(task):.3f} | {algorithmic_debt(task):.3f} | {normalized_debt(task):.3f} |"
         )
     lines.extend(
         [
             "",
             "## Interpretation",
             "",
-            "- Debt includes direct inference, orchestration, safety, and interaction costs.",
-            "- Normalized debt helps show whether burden grows beyond prompt length alone.",
-            "- This benchmark is a mathematical scaffold for later real logging against actual workflows.",
+            "- Wish complexity is the main input-side variable.",
+            "- Request cost models the burden of the compensating requests that follow the wish.",
+            "- Normalized debt tests whether burden grows beyond wish length alone.",
         ]
     )
     path.write_text("\n".join(lines), encoding="utf-8")

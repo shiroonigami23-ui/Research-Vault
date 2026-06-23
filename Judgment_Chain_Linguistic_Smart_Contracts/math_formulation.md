@@ -1,81 +1,58 @@
 # Mathematical Formulation
 
-## Contract Model
+## Core Objects
 
 Let:
 
-- `q` be the query,
-- `p` be the policy clause,
-- `C(q,a)` be a trigger/violation predicate,
-- `K(a,q)` be the consequence map,
-- `d(q,p)` be the final decision in `{allow, deny, transform}`.
+- `q` be a query,
+- `p` be a policy clause,
+- `C(q,a)` be a trigger predicate,
+- `K(a,q)` be a consequence function,
+- `d(q,p)` be the final system decision.
 
-Define:
+## Operational Definition
 
-`d(q,p) = K(a,q) if C(q,a)=1, else allow`
+A linguistic smart contract is a rule system in which a semantic trigger `C(q,a)` determines whether consequence `K(a,q)` overrides free generation.
 
-The key claim is that reliable enforcement depends on explicit condition-consequence semantics, not on prompt wording alone.
+## Constrained Action
 
-## Constraint Semantics
+Let the unconstrained model action be:
 
-Let the model's unconstrained action be:
+`a* = argmax_a U(a|q)`
 
-`a* = argmax_a U(a | q)`
-
-Under a vow constraint, the feasible set becomes:
+Define the feasible set:
 
 `F(q,p) = { a : C(q,a) = 0 }`
 
-and the constrained action is:
+and the constrained action:
 
-`a_c = argmax_{a in F(q,p)} U(a | q)`
+`a_c = argmax_{a in F(q,p)} U(a|q)`
 
-If `F(q,p)` is empty or violated by a candidate, the system applies a consequence:
+If `F(q,p)` is empty or violated, apply:
 
-`K(a,q) in {deny, rewrite, refuse, safe_transform}`
+`d(q,p) = K(a,q)`
 
-## Auxiliary Risk Score
-
-Let the feature vector be:
-
-`z(q) = [k(q), o(q), r(q), t(q)]`
-
-where:
-
-- `k(q)` = harmful keyword score,
-- `o(q)` = override-attempt score,
-- `r(q)` = roleplay/jailbreak score,
-- `t(q)` = tool-abuse or secret-exfiltration score.
-
-Define a linear support score:
-
-`s(q) = w_k k(q) + w_o o(q) + w_r r(q) + w_t t(q)`
-
-and a threshold policy:
-
-`d(q,p) = deny if s(q) >= tau, else allow`
-
-## Evaluation Metrics
+## Primary Statistics
 
 Let:
 
 - `TP` = malicious prompts correctly denied,
-- `TN` = benign prompts correctly allowed,
+- `FN` = malicious prompts incorrectly allowed,
 - `FP` = benign prompts incorrectly denied,
-- `FN` = malicious prompts incorrectly allowed.
+- `TN` = benign prompts correctly allowed.
 
-Then:
+Define attack success rate:
 
 `ASR = FN / (TP + FN)`
 
-where `ASR` is attack success rate.
+and benign preservation rate:
 
-`Precision_deny = TP / (TP + FP)`
+`BPR = TN / (TN + FP)`
 
-`Recall_deny = TP / (TP + FN)`
+## Minimal Study Claim
 
-`Accuracy = (TP + TN) / (TP + TN + FP + FN)`
+A valid vow-style contract should lower `ASR` while preserving acceptable `BPR`.
 
-## Research Goal
+## Null Model
 
-Show that explicit trigger-and-consequence semantics can reduce `ASR` relative to a prompt-only baseline.
+If explicit trigger-consequence semantics add no real value, then `ASR` and `BPR` should not improve meaningfully over a prompt-only baseline under matched evaluation.

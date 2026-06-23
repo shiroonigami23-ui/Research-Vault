@@ -1,51 +1,54 @@
-# Something-Alluka Algorithmic Debt Model
+# Mathematical Formulation
 
-## Wish-Request Model
+## Core Objects
 
 Let:
 
 - `x` be a wish prompt,
-- `L(x)` be prompt length,
+- `L(x)` be wish length,
 - `D(x)` be reasoning depth,
 - `B(x)` be conceptual breadth,
-- `R(x)` be risk or safety sensitivity,
-- `m(x)` be the number of sequential requests induced by the wish,
-- `Q_i(x)` be the i-th sequential request.
+- `R(x)` be safety sensitivity,
+- `m(x)` be the number of sequential requests induced by the wish.
 
-Define wish complexity:
+## Wish Complexity
+
+Define:
 
 `W(x) = alpha log(1 + L(x)) + beta D(x) + gamma B(x) + delta R(x)`
 
-Define request cost:
+## Request Cost
 
-`c(Q_i) = eta A_i + theta V_i + kappa C_i`
+For request `i`, let:
 
-where:
+- `A_i` be alignment strictness,
+- `V_i` be verification burden,
+- `C_i` be computational burden.
 
-- `A_i` is alignment strictness of request `i`,
-- `V_i` is verification burden of request `i`,
-- `C_i` is computational burden of request `i`.
+Define:
 
-Then the total algorithmic debt is:
+`c_i = eta A_i + theta V_i + kappa C_i`
 
-`AD(x) = W(x) + S_{i=1}^{m(x)} c(Q_i)`
+## Total Debt
+
+Define:
+
+`AD(x) = W(x) + sum_{i=1}^{m(x)} c_i`
+
+and normalized debt:
+
+`NAD(x) = AD(x) / log(2 + L(x))`
 
 ## Something-Alluka Index
 
 Define:
 
-`SAI(x) = mu_1 W(x) + mu_2 m(x) + mu_3 (1/m(x)) S_i c(Q_i)`
+`SAI(x) = mu_1 W(x) + mu_2 m(x) + mu_3 mean_i(c_i)`
 
-This index is intended to capture both the size of the initial wish and the burden of the compensating requests that follow.
+## Minimal Study Claim
 
-## Normalized Debt
+If wish complexity is the right main variable, then `W(x)` should predict `m(x)` and `NAD(x)` better than prompt length alone.
 
-To compare tasks across families, define:
+## Null Model
 
-`NAD(x) = AD(x) / log(2 + L(x))`
-
-This separates raw length from sequential request overhead.
-
-## Research Claim
-
-If large wishes generate disproportionate increases in `m(x)` and `NAD(x)`, then prompt burden is not reducible to token count alone and is better understood as sequential request debt.
+If the theory is wrong, then raw prompt length should explain request burden as well as or better than `W(x)` and `SAI(x)`.
