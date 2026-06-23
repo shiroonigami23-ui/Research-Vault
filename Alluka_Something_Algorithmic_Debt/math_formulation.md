@@ -1,42 +1,51 @@
-# Mathematical Formulation
+# Something-Alluka Algorithmic Debt Model
 
-## Algorithmic Debt Model
+## Wish-Request Model
 
 Let:
 
-- `x` be a task prompt,
-- `T(x)` be prompt token count,
+- `x` be a wish prompt,
+- `L(x)` be prompt length,
 - `D(x)` be reasoning depth,
-- `U(x)` be tool-use steps,
-- `V(x)` be verification steps,
-- `S(x)` be safety sensitivity.
+- `B(x)` be conceptual breadth,
+- `R(x)` be risk or safety sensitivity,
+- `m(x)` be the number of sequential requests induced by the wish,
+- `Q_i(x)` be the i-th sequential request.
 
-Define direct inference cost:
+Define wish complexity:
 
-`I(x) = alpha * log(1 + T(x)) + beta * D(x)`
+`W(x) = alpha log(1 + L(x)) + beta D(x) + gamma B(x) + delta R(x)`
 
-Define orchestration cost:
+Define request cost:
 
-`O(x) = gamma * U(x) + delta * V(x)`
+`c(Q_i) = eta A_i + theta V_i + kappa C_i`
 
-Define safety overhead:
+where:
 
-`H(x) = epsilon * S(x) + zeta * D(x) * S(x)`
+- `A_i` is alignment strictness of request `i`,
+- `V_i` is verification burden of request `i`,
+- `C_i` is computational burden of request `i`.
 
 Then the total algorithmic debt is:
 
-`AD(x) = I(x) + O(x) + H(x) + eta * U(x) * V(x)`
+`AD(x) = W(x) + S_{i=1}^{m(x)} c(Q_i)`
 
-The interaction term `eta * U(x) * V(x)` models the intuition that multi-tool workflows become more expensive when verification must also scale.
+## Something-Alluka Index
+
+Define:
+
+`SAI(x) = mu_1 W(x) + mu_2 m(x) + mu_3 (1/m(x)) S_i c(Q_i)`
+
+This index is intended to capture both the size of the initial wish and the burden of the compensating requests that follow.
 
 ## Normalized Debt
 
 To compare tasks across families, define:
 
-`NAD(x) = AD(x) / log(2 + T(x))`
+`NAD(x) = AD(x) / log(2 + L(x))`
 
-This separates raw length from systems overhead.
+This separates raw length from sequential request overhead.
 
 ## Research Claim
 
-If complex tasks generate disproportionate increases in `NAD(x)`, then prompt burden is not reducible to token count alone.
+If large wishes generate disproportionate increases in `m(x)` and `NAD(x)`, then prompt burden is not reducible to token count alone and is better understood as sequential request debt.

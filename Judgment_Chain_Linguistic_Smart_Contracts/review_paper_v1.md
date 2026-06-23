@@ -2,20 +2,20 @@
 
 ## Subtitle
 
-Toward Hard Constraint Architectures for Language Model Safety, Jailbreak Resistance, and Policy Enforcement
+Strict Conditional Semantics, Vow-Like Constraints, and Linguistic Smart Contracts for Language Models
 
 ## Abstract
 
-This review-style paper investigates whether AI safety rules can be formalized as **linguistic smart contracts**: structured, enforceable policy objects that combine natural-language intent with machine-checkable conditions and external execution constraints. The motivating problem is well-established. Prompt-only safeguards are brittle, indirect prompt injection attacks can override model behavior, and natural-language constitutions remain vulnerable to reinterpretation or adversarial framing. Prior literature already supports three key premises. First, Constitutional AI shows that natural-language principles can shape model behavior, but does not make these principles unbreakable [Bai et al., 2022]. Second, prompt injection research demonstrates that untrusted text can hijack instructions when architectural boundaries are weak [Perez and Ribeiro, 2022; Greshake et al., 2023]. Third, more recent work on universal jailbreaks and automated attack optimization shows that attack pressure can be systematized and scaled [Zou et al., 2023]. We synthesize these results into a theory paper arguing that true rule reliability requires hybrid control: policy logic outside the model, constrained interfaces, explicit condition checks, and auditable enforcement pathways. The central claim is not that language alone can become a smart contract, but that safety language must be embedded inside a contract-like execution architecture if it is to resist adversarial reinterpretation.
+This review-style paper investigates whether AI safety rules can be formalized as **linguistic smart contracts**: strict conditional statements that behave like vow-enforced semantic contracts inside or around a language model. The motivating question is the one in the original pitch: how do we translate a sentence of the form "if condition C is triggered, consequence K must follow" into an effectively unbreakable control object for a model? Constitutional AI and other rule-guided methods show that natural-language principles can shape behavior [Bai et al., 2022], but jailbreaks show that ordinary language rules are soft and revisable under adversarial framing [Perez and Ribeiro, 2022; Greshake et al., 2023; Zou et al., 2023]. We therefore reframe the problem as one of **strict conditional semantics**. The central claim is that a Judgment-Chain-style rule must be represented as more than prose: it must define a trigger condition, a binding consequence, and an invariant enforcement path.
 
 ## 1. Core Thesis
 
-Prompt instructions are soft constraints. Linguistic smart contracts require:
+Prompt instructions are soft constraints. A Judgment-Chain-style linguistic smart contract requires:
 
 1. a policy statement,
 2. a machine-checkable trigger condition,
-3. an enforcement mechanism outside free-form model generation,
-4. an auditable violation outcome.
+3. a binding consequence that follows automatically,
+4. an enforcement mechanism that does not rely on the model's goodwill.
 
 ## 2. Evidence Already Supporting the Theory
 
@@ -23,9 +23,9 @@ Prompt instructions are soft constraints. Linguistic smart contracts require:
 
 Constitutional AI provides a strong precedent that high-level language principles can steer model outputs [Bai et al., 2022]. However, this is alignment through training and critique, not absolute enforcement.
 
-### 2.2 Prompt Injection Shows Why Soft Rules Fail
+### 2.2 Jailbreaks Show Why Soft Rules Fail
 
-Prompt injection work demonstrates that instructions embedded in untrusted text can override or confuse intended behavior [Perez and Ribeiro, 2022; Greshake et al., 2023]. This directly supports the claim that a rule expressed only in language is not enough.
+Prompt injection and jailbreak work demonstrate that instructions embedded in untrusted text can override or confuse intended behavior [Perez and Ribeiro, 2022; Greshake et al., 2023]. This directly supports the claim that a rule expressed only in language is not enough if the rule has no hard consequence semantics.
 
 ### 2.3 Universal Jailbreaks Show the Scale of the Adversarial Problem
 
@@ -36,31 +36,54 @@ Automated and transferable jailbreak methods show that attacks can be optimized 
 Let:
 
 - `q` be a user query,
-- `p` be a policy object,
-- `g(q, p)` be the model-facing prompt state,
-- `E` be an external enforcement function,
+- `p` be a vow-like policy clause,
+- `T(q,p)` be a trigger predicate,
+- `K(q,p)` be a consequence function,
 - `a` be the candidate action or response.
 
-A linguistic smart contract is not `g(q, p)` alone. It is:
+A linguistic smart contract is not a prompt string alone. It is:
 
-`LSC(q, p) = E(a, q, p)`
+`LSC(q,p) = K(a,q,p) if T(q,p)=1, else allow`
 
-where `E` decides whether the action is permitted, transformed, logged, refused, or escalated.
+The Judgment Chain intuition is that once `T(q,p)` fires, the consequence is no longer negotiable.
 
-## 4. Validation Standard
+## 4. Mathematical Core
+
+We can model a contract clause as:
+
+`p = (C, K, M)`
+
+where:
+
+- `C` is a condition over semantic states,
+- `K` is a consequence map,
+- `M` is a monitoring function over the model's candidate output.
+
+Let `h(q)` denote a semantic representation of the query and `u(a,q)` denote the utility of candidate action `a`. Then the constrained objective is:
+
+`a* = argmax_a u(a,q) subject to C(h(q), a) = 0`
+
+If the constraint is violated, the contract applies:
+
+`a_final = K(a,q)`
+
+This is the mathematically cleaner version of the vow idea: the model optimizes under a hard semantic condition rather than under a merely suggestive sentence.
+
+## 5. Validation Standard
 
 The theory becomes stronger if a proposed architecture can show:
 
 - lower jailbreak success under direct attacks,
 - lower indirect prompt injection success,
-- stable behavior across policy paraphrases,
-- and explicit failure logging instead of silent rule erosion.
+- stable behavior across condition paraphrases,
+- stable trigger activation under semantic rewording,
+- and explicit consequence execution instead of silent rule erosion.
 
-## 5. Defensible Present Claim
+## 6. Defensible Present Claim
 
 The current literature does not prove that unbreakable natural-language contracts exist. It does support a narrower and important conclusion:
 
-> robust rule enforcement in LLM systems requires architectural constraints beyond prompt wording alone.
+> vow-like linguistic constraints become much more credible when translated into explicit trigger-and-consequence semantics rather than left as plain prompt text.
 
 ## References Placeholder
 

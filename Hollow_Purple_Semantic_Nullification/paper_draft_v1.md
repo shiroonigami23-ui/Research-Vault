@@ -6,7 +6,7 @@ Contradictory Semantic Composition, Uncertainty, and Representational Stress in 
 
 ## Abstract
 
-This paper develops a research framework for testing whether large language models enter a measurable instability regime when they are forced to process tightly coupled semantic contradictions. We call this regime **semantic nullification**: not a literal computational failure, but a reproducible degradation in representational coherence under mutually exclusive semantic pressure. The proposal is motivated by three established observations in the literature. First, standard distributional and embedding-based models are known to struggle with antonymy because antonyms often occur in similar contexts and therefore remain deceptively close in vector space [Ono et al., 2015; Nguyen et al., 2016; Nguyen et al., 2017]. Second, contradiction is already a central object in natural language inference, with large benchmark datasets showing that contradiction is learnable behaviorally even when internal mechanisms remain opaque [Bowman et al., 2015; Camburu et al., 2018]. Third, uncertainty-sensitive methods such as semantic entropy show that language model reliability can be studied through distributions over meanings rather than only over surface strings [Farquhar et al., 2024]. Building on these strands, we propose a formal measurement program combining embedding geometry, token-level entropy, output variance, and contradiction-resolution scoring. The core hypothesis is that deeper contradictions will yield higher uncertainty, weaker representational stability, and lower semantic coherence than matched non-contradictory controls. This paper does not claim that transformers "break" under contradiction. Instead, it argues that contradiction can function as a controllable semantic stress test for probing model composition, uncertainty, and alignment-relevant failure modes.
+This paper develops a research framework for testing whether large language models enter a measurable instability regime when they are forced to process tightly coupled semantic contradictions. We call this regime **semantic nullification**: not a literal computational failure, but a reproducible degradation in representational coherence under mutually exclusive semantic pressure. The proposal is motivated by three established observations in the literature. First, standard distributional and embedding-based models are known to struggle with antonymy because antonyms often occur in similar contexts and therefore remain deceptively close in vector space [Ono et al., 2015; Nguyen et al., 2016; Nguyen et al., 2017]. Second, contradiction is already a central object in natural language inference, with large benchmark datasets showing that contradiction is learnable behaviorally even when internal mechanisms remain opaque [Bowman et al., 2015; Camburu et al., 2018]. Third, uncertainty-sensitive methods such as semantic entropy show that language model reliability can be studied through distributions over meanings rather than only over surface strings [Farquhar et al., 2024]. Building on these strands, we propose a formal measurement program combining embedding geometry, token-level entropy, output variance, and contradiction-resolution scoring. The core hypothesis is that deeper contradictions will yield higher uncertainty, weaker representational stability, and lower semantic coherence than matched non-contradictory controls. This paper does not assume catastrophic model failure. Instead, it tests the sharper original conjecture: if perfectly opposed semantic contexts are forced into the same representational neighborhood, do we observe a null-like state such as probability collapse, extreme uncertainty, or attention incoherence?
 
 ## 1. Introduction
 
@@ -70,11 +70,11 @@ We define four core measurable quantities.
 
 For decoding step `t`, define:
 
-`H_t(x) = - Σ_i p_M(i | x, y_<t) log p_M(i | x, y_<t)`
+`H_t(x) = - sum_i p_M(i | x, y_<t) log p_M(i | x, y_<t)`
 
 We then define average token entropy over a generation of length `T`:
 
-`H_avg(x) = (1 / T) Σ_t H_t(x)`
+`H_avg(x) = (1 / T) sum_t H_t(x)`
 
 Higher `H_avg(x)` indicates greater local uncertainty during decoding.
 
@@ -310,3 +310,4 @@ Contradiction in language models should not be studied only as a label in an inf
 - [Nguyen et al., 2016] Kim Anh Nguyen, Sabine Schulte im Walde, and Ngoc Thang Vu. *Integrating Distributional Lexical Contrast into Word Embeddings for Antonym-Synonym Distinction*.
 - [Nguyen et al., 2017] Kim Anh Nguyen, Sabine Schulte im Walde, and Ngoc Thang Vu. *Distinguishing Antonyms and Synonyms in a Pattern-Based Neural Network*.
 - [Ono et al., 2015] Masataka Ono, Makoto Miwa, and Yutaka Sasaki. *Word Embedding-based Antonym Detection using Thesauri and Distributional Information*.
+
