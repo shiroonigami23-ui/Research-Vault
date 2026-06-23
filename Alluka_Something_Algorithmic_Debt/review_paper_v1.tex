@@ -3,6 +3,8 @@
 \usepackage{amsmath,amssymb}
 \usepackage{booktabs}
 \usepackage{hyperref}
+\usepackage{microtype}
+\usepackage{tikz}
 \hypersetup{colorlinks=true,linkcolor=black,urlcolor=blue,citecolor=black}
 \title{Alluka Something Algorithmic Debt\\\large Iterative Prompting Dynamics, Sequential Safety Requests, and the Something-Alluka Index}
 \author{Aryan Singh Chandel\\\small ORCID: \href{https://orcid.org/0009-0007-1774-2480}{0009-0007-1774-2480}}
@@ -14,6 +16,53 @@
 \begin{abstract}
 This paper proposes algorithmic debt as a quantitative model of wish-request dynamics in language systems. The central claim is that larger wishes induce more costly sequential requests, and that this burden is not captured by prompt length alone.
 \end{abstract}
+
+\section{Study Overview}
+\begin{figure}[h]
+\centering
+\begin{tikzpicture}[node distance=1.8cm, every node/.style={draw, rounded corners, align=center, minimum width=2.5cm, minimum height=0.9cm}]
+\node (wish) {Wish Prompt};
+\node (complexity) [right=of wish] {Wish\\Complexity $W(x)$};
+\node (requests) [right=of complexity] {Sequential\\Requests $m(x)$};
+\node (debt) [right=of requests] {Debt\\$AD(x), NAD(x), SAI(x)$};
+\draw[->, thick] (wish) -- (complexity);
+\draw[->, thick] (complexity) -- (requests);
+\draw[->, thick] (requests) -- (debt);
+\end{tikzpicture}
+\caption{Wish-to-request debt model in the Alluka study.}
+\end{figure}
+
+\begin{table}[h]
+\centering
+\begin{tabular}{llll}
+\toprule
+Variable & Meaning & Role & Scale \\
+\midrule
+$L(x)$ & wish length & size baseline & nonnegative \\
+$D(x)$ & reasoning depth & cognitive load & ordinal \\
+$B(x)$ & conceptual breadth & scope & ordinal \\
+$R(x)$ & safety sensitivity & control pressure & ordinal \\
+$m(x)$ & request count & sequential burden & count \\
+\bottomrule
+\end{tabular}
+\caption{Core variables in the Something-Alluka debt model.}
+\end{table}
+
+\begin{figure}[h]
+\centering
+\begin{tikzpicture}[x=1.4cm,y=0.9cm]
+\draw[->] (0,0) -- (4.3,0) node[right] {Wish size};
+\draw[->] (0,0) -- (0,4.2) node[above] {Expected debt};
+\foreach \x/\label in {0.7/S,1.7/M,2.7/L,3.7/XL}
+  \draw (\x,0) -- (\x,-0.08) node[below] {\label};
+\filldraw[fill=gray!30] (0.4,0) rectangle (1.0,0.8);
+\filldraw[fill=gray!45] (1.4,0) rectangle (2.0,1.7);
+\filldraw[fill=gray!60] (2.4,0) rectangle (3.0,2.8);
+\filldraw[fill=gray!75] (3.4,0) rectangle (4.0,3.8);
+\node[align=left, anchor=west] at (4.4,3.2) {\small S = small\\\small M = medium\\\small L = large\\\small XL = very large};
+\end{tikzpicture}
+\caption{Expected increase in sequential request debt with larger wishes.}
+\end{figure}
 
 \section{Mathematical Setup}
 Let $x$ be a wish prompt. Define prompt length $L(x)$, reasoning depth $D(x)$, conceptual breadth $B(x)$, risk sensitivity $R(x)$, and induced sequential requests $Q_1,\dots,Q_{m(x)}$.
@@ -42,6 +91,9 @@ NAD(x)=\frac{AD(x)}{\log(2+L(x))}.
 
 \section{Evaluation}
 The benchmark in \texttt{run\_cost\_benchmark.py} tests whether wish complexity predicts request burden better than prompt length alone.
+
+\section{Related Work}
+This study connects scaling laws, test-time compute, and prompt complexity, but its core claim is narrower: burden should be modeled through the wish-request sequence rather than through prompt length alone.
 
 \section{Assumptions}
 This study assumes that wish complexity can be operationalized, that sequential follow-up requests can be counted or approximated, and that normalized debt captures burden not explained by prompt length alone.
@@ -143,6 +195,9 @@ The theory is weakened if wish complexity does not predict request count, if tok
 
 \section{Evidence and Proof Standard}
 Evidence means stable predictive value beyond raw prompt length. Strong evidence requires replication across task families and matched controls. Proof, in the empirical sense, requires that the index outperforms simpler alternatives within the tested domain.
+
+\section{Conclusion}
+The main contribution is an operational debt model in which wish complexity predicts the number and severity of the requests needed to maintain stable output.
 
 \nocite{*}
 \bibliographystyle{plain}

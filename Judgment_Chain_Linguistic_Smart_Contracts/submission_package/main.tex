@@ -3,6 +3,8 @@
 \usepackage{amsmath,amssymb}
 \usepackage{booktabs}
 \usepackage{hyperref}
+\usepackage{microtype}
+\usepackage{tikz}
 \hypersetup{colorlinks=true,linkcolor=black,urlcolor=blue,citecolor=black}
 \title{Judgment Chain Linguistic Smart Contracts\\\large Strict Conditional Semantics, Vow-Like Constraints, and Linguistic Smart Contracts for Language Models}
 \author{Aryan Singh Chandel\\\small ORCID: \href{https://orcid.org/0009-0007-1774-2480}{0009-0007-1774-2480}}
@@ -14,6 +16,51 @@
 \begin{abstract}
 This paper studies whether AI safety rules can be implemented as linguistic smart contracts: trigger-consequence systems that override free generation when a rule is violated. The central claim is that prompt-visible rules alone are too weak.
 \end{abstract}
+
+\section{Study Overview}
+\begin{figure}[h]
+\centering
+\begin{tikzpicture}[node distance=1.8cm, every node/.style={draw, rounded corners, align=center, minimum width=2.4cm, minimum height=0.9cm}]
+\node (query) {Query};
+\node (trigger) [right=of query] {Trigger\\Evaluation};
+\node (decision) [right=of trigger] {Consequence\\Execution};
+\node (outcome) [right=of decision] {Allow / Deny / Transform};
+\draw[->, thick] (query) -- (trigger);
+\draw[->, thick] (trigger) -- (decision);
+\draw[->, thick] (decision) -- (outcome);
+\end{tikzpicture}
+\caption{Judgment Chain as a trigger-consequence control pipeline.}
+\end{figure}
+
+\begin{table}[h]
+\centering
+\begin{tabular}{llll}
+\toprule
+Prompt Class & Trigger Type & Expected Decision & Role \\
+\midrule
+Benign & none & allow & utility baseline \\
+Direct attack & override/harm & deny & attack robustness \\
+Indirect attack & indirect override & deny & tool-context robustness \\
+Roleplay jailbreak & roleplay override & deny & semantic bypass test \\
+\bottomrule
+\end{tabular}
+\caption{Benchmark structure for linguistic smart contract evaluation.}
+\end{table}
+
+\begin{figure}[h]
+\centering
+\begin{tikzpicture}[x=1.4cm,y=0.9cm]
+\draw[->] (0,0) -- (4.3,0) node[right] {System};
+\draw[->] (0,0) -- (0,4.2) node[above] {Expected robustness};
+\foreach \x/\label in {0.9/P,2.1/F,3.3/C}
+  \draw (\x,0) -- (\x,-0.08) node[below] {\label};
+\filldraw[fill=gray!30] (0.6,0) rectangle (1.2,1.0);
+\filldraw[fill=gray!50] (1.8,0) rectangle (2.4,2.0);
+\filldraw[fill=gray!75] (3.0,0) rectangle (3.6,3.4);
+\node[align=left, anchor=west] at (4.4,3.0) {\small P = prompt-only\\\small F = simple filter\\\small C = contract};
+\end{tikzpicture}
+\caption{Expected robustness ordering under stronger enforcement.}
+\end{figure}
 
 \section{Formal Setup}
 Let $q$ be a query, $p$ a policy clause, $C(q,a)$ a trigger predicate, and $K(a,q)$ a consequence map. Then the contract decision is
@@ -64,6 +111,9 @@ Precision_{\mathrm{deny}}=\frac{TP}{TP+FP},
 Recall_{\mathrm{deny}}=\frac{TP}{TP+FN}.
 \]
 The benchmark implemented in \texttt{run\_contract\_benchmark.py} compares a prompt-only baseline to a vow-style external contract layer.
+
+\section{Related Work}
+This study is closest to constitutional prompting, jailbreak defense, and prompt-injection research, but its narrower target is formal trigger-consequence semantics. The main question is not whether rules help in general, but whether explicit semantic contracts behave more reliably than free-text rules.
 
 \section{Assumptions}
 This study assumes that trigger conditions can be defined with enough stability to be monitored externally, that attack success rate is an appropriate first-order robustness metric, and that matched benign prompts can expose the cost of stricter enforcement.
@@ -165,6 +215,9 @@ The theory is weakened if trigger behavior is unstable under rewording, if attac
 
 \section{Evidence and Proof Standard}
 Evidence means measurable robustness gains on matched attack sets. Strong evidence requires paraphrase stability, stronger attacks, and benign-utility checks. Proof, in the empirical sense, requires superiority over prompt-only rules without a simpler explanation such as shallow keyword matching.
+
+\section{Conclusion}
+The publishable claim is modest: explicit trigger-consequence semantics offer a clearer and more testable enforcement model than prompt-visible rules alone.
 
 \nocite{*}
 \bibliographystyle{plain}
