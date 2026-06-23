@@ -4,8 +4,9 @@
 \usepackage{booktabs}
 \usepackage{hyperref}
 \usepackage{enumitem}
+\hypersetup{colorlinks=true,linkcolor=black,urlcolor=blue,citecolor=black}
 \title{Hollow Purple Semantic Nullification\\\large Contradictory Semantic Composition, Uncertainty, and Representational Stress in Large Language Models}
-\author{Shiro et al.}
+\author{Aryan Singh Chandel\\\small ORCID: \href{https://orcid.org/0009-0007-1774-2480}{0009-0007-1774-2480}}
 \date{\today}
 
 \begin{document}
@@ -53,8 +54,22 @@ where $V_\ell(P_x)$ denotes paraphrase-level hidden-state variance and $R(x)$ de
 \section{Experimental Design}
 We compare coherent controls, mild tension prompts, explicit contradictions, and deep contradictions. The empirical benchmark in \texttt{benchmark\_suite.json} and \texttt{run\_benchmark.py} provides the first-pass measurement scaffold.
 
+\section{Assumptions}
+This study assumes that contradiction depth is experimentally manipulable, that hidden-state and uncertainty metrics are sensitive to contradiction-induced stress, and that matched ambiguity controls can separate contradiction effects from generic prompt difficulty.
+
+\section{Propositions}
+\textbf{Proposition H1.} Increasing contradiction depth increases average uncertainty.\\
+\textbf{Proposition H2.} Increasing contradiction depth increases semantic output divergence.\\
+\textbf{Proposition H3.} Increasing contradiction depth decreases representational stability.
+
 \section{Validation}
 The theory is supported if contradiction depth predicts increases in uncertainty and instability beyond ambiguity and prompt difficulty controls. We require convergent signals across entropy, variance, and evaluator-rated coherence.
+
+\section{Falsifiers}
+The theory is weakened if contradiction prompts fail to separate from ambiguity controls, if no monotonic relationship appears across contradiction depth, or if the effect vanishes across models and paraphrases.
+
+\section{Evidence and Proof Standard}
+In this project, evidence means stable metric separation under controls. Strong evidence requires replication across models, paraphrases, and multiple measurement channels. Proof, in the empirical sense, requires that the nullification hypothesis survive these tests without a simpler competing explanation within scope.
 
 \section{Conclusion}
 Semantic nullification is not yet proven, but it is mathematically specifiable and empirically testable.

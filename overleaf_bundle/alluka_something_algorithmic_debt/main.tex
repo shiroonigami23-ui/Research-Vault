@@ -3,8 +3,9 @@
 \usepackage{amsmath,amssymb}
 \usepackage{booktabs}
 \usepackage{hyperref}
+\hypersetup{colorlinks=true,linkcolor=black,urlcolor=blue,citecolor=black}
 \title{Alluka Something Algorithmic Debt\\\large Iterative Prompting Dynamics, Sequential Safety Requests, and the Something-Alluka Index}
-\author{Shiro et al.}
+\author{Aryan Singh Chandel\\\small ORCID: \href{https://orcid.org/0009-0007-1774-2480}{0009-0007-1774-2480}}
 \date{\today}
 
 \begin{document}
@@ -42,8 +43,19 @@ NAD(x)=\frac{AD(x)}{\log(2+L(x))}.
 \section{Evaluation}
 The implemented benchmark in \texttt{run\_cost\_benchmark.py} is a first-pass mathematical scaffold for modeling how larger wishes induce more costly compensating requests.
 
-\section{Claim}
-If larger wishes induce disproportionate growth in $m(x)$ and $NAD(x)$, then prompt burden cannot be modeled by token count alone.
+\section{Assumptions}
+This study assumes that wish complexity can be operationalized, that sequential follow-up requests can be counted or approximated, and that normalized debt captures burden not explained by prompt length alone.
+
+\section{Propositions}
+\textbf{Proposition A1.} Increasing wish complexity increases expected sequential request count.\\
+\textbf{Proposition A2.} Increasing wish complexity increases normalized debt faster than token length alone predicts.\\
+\textbf{Proposition A3.} Safety-sensitive wishes induce disproportionately stricter request sequences.
+
+\section{Falsifiers}
+The theory is weakened if wish complexity does not predict request count, if token count explains burden just as well as the full index, or if the index fails to generalize across task families.
+
+\section{Evidence and Proof Standard}
+Evidence means stable predictive value of the Something-Alluka Index beyond raw prompt length. Strong evidence requires replication across task families and controls for prompt size alone. Proof, in the empirical sense, requires that the index consistently explains sequential burden better than simpler alternatives within the tested domain.
 
 \nocite{*}
 \bibliographystyle{plain}

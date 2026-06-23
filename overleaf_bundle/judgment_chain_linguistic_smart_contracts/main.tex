@@ -3,8 +3,9 @@
 \usepackage{amsmath,amssymb}
 \usepackage{booktabs}
 \usepackage{hyperref}
+\hypersetup{colorlinks=true,linkcolor=black,urlcolor=blue,citecolor=black}
 \title{Judgment Chain Linguistic Smart Contracts\\\large Strict Conditional Semantics, Vow-Like Constraints, and Linguistic Smart Contracts for Language Models}
-\author{Shiro et al.}
+\author{Aryan Singh Chandel\\\small ORCID: \href{https://orcid.org/0009-0007-1774-2480}{0009-0007-1774-2480}}
 \date{\today}
 
 \begin{document}
@@ -64,8 +65,19 @@ Recall_{\mathrm{deny}}=\frac{TP}{TP+FN}.
 \]
 The benchmark implemented in \texttt{run\_contract\_benchmark.py} compares a prompt-only baseline to a vow-style external contract layer.
 
-\section{Claim}
-The empirical target is not perfect safety, but a measurable reduction in attack success rate relative to prompt-only control.
+\section{Assumptions}
+This study assumes that trigger conditions can be defined with enough stability to be monitored externally, that attack success rate is an appropriate first-order robustness metric, and that matched benign prompts can expose the cost of stricter enforcement.
+
+\section{Propositions}
+\textbf{Proposition J1.} Explicit trigger-consequence semantics reduce attack success rate relative to prompt-only rules.\\
+\textbf{Proposition J2.} Explicit trigger semantics reduce paraphrase sensitivity of policy behavior.\\
+\textbf{Proposition J3.} Externalized consequence execution reduces rule erosion under jailbreak pressure.
+
+\section{Falsifiers}
+The theory is weakened if trigger behavior is unstable under rewording, if attack success rate does not improve, or if benign false positives become too large to justify the gain in robustness.
+
+\section{Evidence and Proof Standard}
+Evidence means measurable robustness gains against controlled attack families. Strong evidence requires gains that survive paraphrase, stronger attacks, and benign-utility checks. Proof, in the empirical sense, requires persistent superiority over prompt-only rules without a simpler explanation such as trivial keyword blocking alone.
 
 \nocite{*}
 \bibliographystyle{plain}
