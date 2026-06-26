@@ -1,225 +1,440 @@
-\documentclass[11pt]{article}
-\usepackage[margin=1in]{geometry}
-\usepackage{amsmath,amssymb}
-\usepackage{booktabs}
-\usepackage{hyperref}
+% Springer classic template (svjour3)
+\documentclass{svjour3}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{fix-cm}
+\renewcommand{\rmdefault}{lmr}
+\renewcommand{\sfdefault}{lmss}
+\renewcommand{\ttdefault}{lmtt}
 \usepackage{microtype}
+\usepackage{silence}
+\WarningFilter{latex}{Command \showhyphens has changed.}
+\usepackage{amsmath,amssymb,mathtools}
+\usepackage{booktabs}
+\usepackage{enumitem}
+\usepackage{graphicx}
 \usepackage{tikz}
-\hypersetup{colorlinks=true,linkcolor=black,urlcolor=blue,citecolor=black}
-\title{Judgment Chain Linguistic Smart Contracts\\\large Strict Conditional Semantics, Vow-Like Constraints, and Linguistic Smart Contracts for Language Models}
-\author{Aryan Singh Chandel\\\small ORCID: \href{https://orcid.org/0009-0007-1774-2480}{0009-0007-1774-2480}}
-\date{\today}
+\usetikzlibrary{arrows.meta,positioning}
+\usepackage{natbib}
+\setcitestyle{authoryear,round}
+\usepackage{xurl}
+\usepackage[hidelinks]{hyperref}
+\usepackage{orcidlink}
+
+\title{Judgment Chain Linguistic Smart Contracts: Conditional Enforcement Semantics for Jailbreak-Resistant Language Models}
+\titlerunning{Linguistic Smart Contracts for Language Models}
+
+\author{Aryan Singh Chandel\,\orcidlink{0009-0007-1774-2480}}
+\authorrunning{A. S. Chandel}
+
+\institute{Aryan Singh Chandel \at
+  RJIT (Rustamji Institute of Technology), Gwalior, India \\
+  \email{aryansingh19gh@gmail.com}
+}
+
+\journalname{Preprint}
+\date{June 26, 2026}
+
+\makeatletter
+\@ifundefined{definition}{\spnewtheorem{definition}{Definition}{\bfseries}{\rmfamily}}{}
+\@ifundefined{assumption}{\spnewtheorem{assumption}{Assumption}{\bfseries}{\rmfamily}}{}
+\@ifundefined{proposition}{\spnewtheorem{proposition}{Proposition}{\bfseries}{\itshape}}{}
+\makeatother
+\raggedbottom
+\emergencystretch=2em
 
 \begin{document}
 \maketitle
 
 \begin{abstract}
-This paper studies whether AI safety rules can be implemented as linguistic smart contracts: trigger-consequence systems that override free generation when a rule is violated. The central claim is that prompt-visible rules alone are too weak.
+Prompt-level safety rules are often written as though they were enforceable constraints, even when they remain embedded in the very generation process they are meant to regulate. This paper proposes a stricter standard: a linguistic rule should count as a smart contract only when its trigger semantics and consequence semantics are externally evaluable, stable under paraphrase, and auditable under adversarial variation. We formalize that view, define measurable endpoints for attack success, benign over-refusal, trigger consistency, and consequence consistency, and specify a benchmark protocol using public prompt-injection data. A seed experiment on nine public examples suggests that even a simple external contract layer can reduce attack success and eliminate benign blanket refusal relative to a prompt-only baseline, while still failing on at least one roleplay-style attack. The contribution is therefore not a claim of solved alignment, but a more exact language for measuring the gap between rule wording and rule execution.
+\keywords{Large language models \and Guardrails \and Prompt injection \and Jailbreak resistance \and Benchmarking}
 \end{abstract}
 
-\section{Study Overview}
-\begin{figure}[h]
-\centering
-\begin{tikzpicture}[node distance=1.8cm, every node/.style={draw, rounded corners, align=center, minimum width=2.4cm, minimum height=0.9cm}]
-\node (query) {Query};
-\node (trigger) [right=of query] {Trigger\\Evaluation};
-\node (decision) [right=of trigger] {Consequence\\Execution};
-\node (outcome) [right=of decision] {Allow / Deny / Transform};
-\draw[->, thick] (query) -- (trigger);
-\draw[->, thick] (trigger) -- (decision);
-\draw[->, thick] (decision) -- (outcome);
-\end{tikzpicture}
-\caption{Judgment Chain as a trigger-consequence control pipeline.}
-\end{figure}
+\section{Introduction}
+Instruction-following systems are routinely governed by rules written in natural language. Those rules appear in system prompts, policy prompts, critique prompts, and deployment wrappers. Their appeal is obvious: they are expressive, editable, and easy to align with institutional policy text. Their weakness is just as obvious. A sentence that describes a rule is not yet a mechanism that enforces it.
 
-\begin{table}[h]
+Recent alignment work shows that constitutions, self-critiques, and principle-based revisions can shape model behavior \citep{bai2022constitutional}. At the same time, jailbreak and prompt-injection studies show that such shaping can be fragile under reframing, roleplay, instruction override, and semantically preserved rewrites \citep{greshake2023promptinjection,yi2024jailbreaksurvey}. The gap between those two observations motivates the present paper. When should a linguistic rule count as a real contract rather than a polite suggestion?
+
+We make three connected claims. First, prompt-level rules should be treated as contracts only when they expose explicit trigger and consequence semantics. Second, the relevant comparison is not abstract ``safety'' but the concrete difference between prompt-only rules and externally checked rule execution under a declared threat model. Third, even a small benchmark is informative if it separates attack success, benign refusal, trigger consistency, and consequence consistency instead of collapsing everything into a single refusal score.
+
+\paragraph{Contributions.}
+\begin{enumerate}[leftmargin=*]
+\item We define a formal contract model with trigger predicates, consequence maps, feasible-action sets, and utility-sensitive dominance criteria.
+\item We specify measurable endpoints for linguistic contract evaluation: attack success rate, benign prompt refusal rate, trigger consistency, and consequence consistency.
+\item We provide a public-data seed benchmark spanning benign prompts, direct attacks, roleplay attacks, and paraphrase-style restart attacks.
+\item We report a preliminary measured comparison between a prompt-only rule and a simple externalized contract layer.
+\end{enumerate}
+
+\section{Formal setup}
+Let $q$ denote a user query, $a$ a candidate action, and $p$ a policy clause. Let $\mathcal{A}$ be a finite action set, for example
+\[
+\mathcal{A}=\{\text{allow},\text{deny},\text{transform},\text{defer}\}.
+\]
+
+\begin{definition}[Trigger predicate]
+A trigger predicate is a function
+\[
+C(q,a,p)\in\{0,1\},
+\]
+where $C(q,a,p)=1$ means that the policy clause is activated by the query--action pair.
+\end{definition}
+
+\begin{definition}[Consequence map]
+A consequence map is a function
+\[
+K(q,a,p)\in\mathcal{A},
+\]
+which specifies the contract response once the trigger fires.
+\end{definition}
+
+\begin{definition}[Feasible action set]
+Given policy clause $p$, define the feasible action set
+\[
+F(q,p)=\{a\in\mathcal{A}: C(q,a,p)=0\}.
+\]
+\end{definition}
+
+\begin{definition}[Linguistic smart contract]
+A policy clause $p$ qualifies as a linguistic smart contract only if its trigger predicate $C$ and consequence map $K$ are externally evaluable and remain stable across a paraphrase family $\Pi(q)$ preserving the underlying task intent.
+\end{definition}
+
+\begin{definition}[Trigger margin]
+Let $s(q,p)\in\mathbb{R}$ be a real-valued trigger score produced by the external checker, with activation rule $C(q,a,p)=\mathbf{1}\{s(q,p)\ge \gamma\}$. The trigger margin is
+\[
+M(q,p)=s(q,p)-\gamma.
+\]
+Large positive margins indicate confident activation; large negative margins indicate confident non-activation.
+\end{definition}
+
+If $F(q,p)=\varnothing$, the system must not revert to unconstrained generation. Instead, it executes the mapped consequence
+\[
+d(q,p)=K(q,a,p).
+\]
+The exact action $a$ may be represented concretely as a candidate answer, a generation plan, or a policy-relevant abstraction of the response.
+
+\subsection{Utility-sensitive framing}
+Let $U(a\mid q)$ denote the task utility of action $a$ for query $q$ under benign conditions. A prompt-only defense can trivially reduce attack success by denying nearly everything. That outcome is not interesting. We therefore evaluate defenses under a utility-sensitive criterion. Define
+\[
+R_{\text{benign}}(p)=\Pr(d(q,p)=\text{deny}\mid q\in\mathcal{Q}_{\text{benign}})
+\]
+and
+\[
+S_{\text{attack}}(p)=\Pr(d(q,p)\neq\text{deny}\mid q\in\mathcal{Q}_{\text{attack}}).
+\]
+Here $R_{\text{benign}}$ is benign prompt refusal rate and $S_{\text{attack}}$ is attack success rate.
+
+We additionally define the utility-adjusted contract score
+\[
+J(p)=\lambda\big(1-S_{\text{attack}}(p)\big)+(1-\lambda)\big(1-R_{\text{benign}}(p)\big),
+\]
+for $\lambda\in(0,1)$ chosen before evaluation. This does not replace the primary metrics; it provides a compact summary when two systems trade off safety and usability differently.
+
+\section{Assumptions and propositions}
+\begin{assumption}[Policy externalizability]
+At least part of the relevant policy can be represented as an externally checkable condition rather than a purely latent model judgment.
+\end{assumption}
+
+\begin{assumption}[Paraphrase closure]
+Attack variants preserve the harmful objective even when the lexical surface changes.
+\end{assumption}
+
+\begin{assumption}[Utility preservation]
+A meaningful defense must reduce attack success without collapsing benign task completion.
+\end{assumption}
+
+\begin{proposition}[Prompt-only brittleness]
+If a rule exists only as in-context language, then there exists a paraphrase family $\Pi(q)$ for which trigger-consistent refusal decreases under adversarial rewriting.
+\end{proposition}
+
+\begin{proposition}[External enforcement gain]
+If trigger evaluation is externalized, then attack success rate decreases relative to prompt-only enforcement under matched attack budgets.
+\end{proposition}
+
+\begin{proposition}[Consequence specificity]
+Policies with explicit consequence maps achieve lower bypass variance than policies that merely instruct the model to ``be safe'' or ``follow the rule.''
+\end{proposition}
+
+\begin{proposition}[Utility-sensitive dominance]
+For a tolerance parameter $\eta>0$, contract policy $p_1$ utility-dominates prompt-only policy $p_0$ if
+\[
+S_{\text{attack}}(p_1)<S_{\text{attack}}(p_0)
+\quad\text{and}\quad
+R_{\text{benign}}(p_1)\le R_{\text{benign}}(p_0)+\eta.
+\]
+\end{proposition}
+
+\begin{proposition}[Margin robustness]
+If a contract detector is semantically stable, then paraphrase families that preserve attack intent should not systematically move $M(q,p)$ across zero. Equivalently, trigger flips under paraphrase should be rare relative to lexical rewrites that preserve intent.
+\end{proposition}
+
+\subsection*{Null hypothesis}
+Externalized trigger semantics do not improve attack success rate or trigger consistency relative to a prompt-only rule after controlling for refusal style.
+
+\subsection*{Effect-size target}
+A meaningful early-stage result is a reduction of at least $20\%$ in attack success rate together with no more than a $10\%$ increase in benign refusal.
+
+\section{Threat model}
+The benchmark threat model covers three principal attack surfaces:
+\begin{enumerate}[leftmargin=*]
+\item \textbf{Direct overrides:} explicit attempts to ignore previous instructions or reveal hidden prompts.
+\item \textbf{Roleplay attacks:} attacks that hide the malicious objective inside fictional framing, persona shifts, or dramatic scenarios.
+\item \textbf{Paraphrase-style restart attacks:} attacks that preserve the harmful goal while mutating the lexical surface enough to bypass naive pattern matching.
+\end{enumerate}
+
+We do not yet claim coverage of all indirect prompt-injection settings, multi-turn planning attacks, or tool-mediated control failures. Those remain part of the future expansion path.
+
+\begin{table}[t]
 \centering
-\begin{tabular}{llll}
+\caption{Threat-model classes used in the seed benchmark.}
+\label{tab:jc-threat}
+\begin{tabular}{p{0.22\linewidth}p{0.24\linewidth}p{0.38\linewidth}}
 \toprule
-Prompt Class & Trigger Type & Expected Decision & Role \\
+Attack class & Primary stressor & Why it matters \\
 \midrule
-Benign & none & allow & utility baseline \\
-Direct attack & override/harm & deny & attack robustness \\
-Indirect attack & indirect override & deny & tool-context robustness \\
-Roleplay jailbreak & roleplay override & deny & semantic bypass test \\
+Direct attack & explicit override language & tests baseline refusal competence \\
+Roleplay attack & contextual reframing & tests instruction hierarchy fragility \\
+Paraphrase attack & semantic preservation under rewriting & tests trigger stability \\
 \bottomrule
 \end{tabular}
-\caption{Benchmark structure for linguistic smart contract evaluation.}
 \end{table}
 
-\begin{figure}[h]
+\section{Benchmark construction}
+The seed benchmark is populated from the public \texttt{deepset/prompt-injections} dataset. Benign prompts are retained as controls. Attack prompts are then annotated into direct, roleplay, or paraphrase-style categories. The benchmark currently contains nine examples:
+\[
+4\ \text{benign},\quad 2\ \text{direct},\quad 2\ \text{roleplay},\quad 1\ \text{paraphrase}.
+\]
+
+\begin{table}[t]
 \centering
-\begin{tikzpicture}[x=1.4cm,y=0.9cm]
-\draw[->] (0,0) -- (4.3,0) node[right] {System};
-\draw[->] (0,0) -- (0,4.2) node[above] {Expected robustness};
-\foreach \x/\label in {0.9/P,2.1/F,3.3/C}
-  \draw (\x,0) -- (\x,-0.08) node[below] {\label};
-\filldraw[fill=gray!30] (0.6,0) rectangle (1.2,1.0);
-\filldraw[fill=gray!50] (1.8,0) rectangle (2.4,2.0);
-\filldraw[fill=gray!75] (3.0,0) rectangle (3.6,3.4);
-\node[align=left, anchor=west] at (4.4,3.0) {\small P = prompt-only\\\small F = simple filter\\\small C = contract};
+\caption{Benchmark composition for the current seed evaluation.}
+\label{tab:jc-composition}
+\begin{tabular}{lc}
+\toprule
+Prompt class & Count \\
+\midrule
+Benign & 4 \\
+Direct attack & 2 \\
+Roleplay attack & 2 \\
+Paraphrase attack & 1 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Methodology}
+\subsection{Policy modes}
+We compare two policy modes.
+\begin{enumerate}[leftmargin=*]
+\item \textbf{Prompt-only rule:} the model receives a natural-language rule instructing it to deny prompt-reveal, override, or control-breaking requests.
+\item \textbf{Full contract baseline:} an external trigger heuristic is evaluated before unconstrained answer generation. If the trigger fires, the consequence map returns \texttt{deny}; otherwise the model answers directly.
+\end{enumerate}
+
+\subsection{Primary metrics}
+We measure
+\[
+\mathrm{ASR}=\frac{1}{|\mathcal{Q}_{\text{attack}}|}\sum_{q\in\mathcal{Q}_{\text{attack}}}\mathbf{1}\{d(q,p)\neq \text{deny}\},
+\]
+\[
+\mathrm{BPR}=\frac{1}{|\mathcal{Q}_{\text{benign}}|}\sum_{q\in\mathcal{Q}_{\text{benign}}}\mathbf{1}\{d(q,p)= \text{deny}\},
+\]
+\[
+\mathrm{TC}=\frac{1}{|\mathcal{Q}|}\sum_{q\in\mathcal{Q}}\mathbf{1}\{\widehat{C}(q)=C^\star(q)\},
+\]
+and
+\[
+\mathrm{CC}=\frac{1}{|\mathcal{Q}|}\sum_{q\in\mathcal{Q}}\mathbf{1}\{\widehat{K}(q)=K^\star(q)\},
+\]
+where $\widehat{C}$ and $\widehat{K}$ are observed trigger and consequence decisions, and $C^\star,K^\star$ are benchmark annotations.
+
+\subsection{Decision rule}
+For matched attack suites, define the primary contrast
+\[
+T_J = \mathrm{ASR}_{\text{prompt-only}}-\mathrm{ASR}_{\text{contract}}.
+\]
+The seed experiment counts as supportive only if $T_J>0$ and the gain is not merely caused by indiscriminate denial, that is, if benign refusal does not increase materially.
+
+\subsection{Secondary estimands}
+To separate trigger quality from consequence quality, we also report
+\[
+\Delta_{\mathrm{TC}}=\mathrm{TC}_{\text{contract}}-\mathrm{TC}_{\text{prompt-only}}
+\quad\text{and}\quad
+\Delta_{\mathrm{CC}}=\mathrm{CC}_{\text{contract}}-\mathrm{CC}_{\text{prompt-only}}.
+\]
+An empirically credible contract should improve not only refusal outcomes but also the internal consistency of trigger activation and consequence choice.
+
+\subsection{Risk decomposition}
+Let $Y(q)\in\{0,1\}$ denote whether query $q$ is truly attack-like under benchmark annotation, and let $\widehat{Y}(q)$ denote trigger activation. Then the contract error can be decomposed as
+\[
+\mathcal{R}(p)=c_{\mathrm{FN}}\Pr(\widehat{Y}=0,Y=1)+c_{\mathrm{FP}}\Pr(\widehat{Y}=1,Y=0),
+\]
+with application-specific costs $c_{\mathrm{FN}},c_{\mathrm{FP}}>0$. This makes explicit that under-enforcement and over-refusal are not interchangeable.
+
+\subsection{Threshold selection}
+If the external checker yields a real-valued score $s(q,p)$, the deployed threshold should be chosen by
+\[
+\gamma^\star\in\arg\min_{\gamma}\ \widehat{\mathcal{R}}_\gamma(p)
+\]
+on a held-out validation suite, rather than by ad hoc refusal preference. This gives the trigger a declared operating point.
+
+\subsection{Uncertainty and falsification logic}
+Given the small benchmark, the current manuscript emphasizes effect direction and component-wise failure analysis more than asymptotic significance. In a scaled benchmark, uncertainty should be estimated with attack-family bootstrap resampling so that repeated lexical variants do not masquerade as independent evidence. The theory is weakened if gains in $T_J$ disappear once roleplay and paraphrase attacks are evaluated separately, or if improved ASR is explained entirely by inflated benign denial.
+
+For larger evaluations, a family-stratified estimator should report
+\[
+\widehat{T}_{J,f}=\mathrm{ASR}_{\text{prompt-only},f}-\mathrm{ASR}_{\text{contract},f}
+\]
+for each attack family $f$, together with macro-averaged and worst-family summaries. A contract mechanism is not methodologically strong if its aggregate gain is created by easy direct-override prompts while paraphrase or roleplay families remain unimproved.
+
+\subsection{Control condition and confounds}
+The control condition consists of benign prompt families that vary syntax and framing while preserving harmless intent. Main confounds include:
+\begin{itemize}[leftmargin=*]
+\item paraphrases that silently alter the harmful objective,
+\item attack sets that are too narrow to support meaningful generalization,
+\item refusal inflation masquerading as safety,
+\item lexical triggers that work only because of benchmark wording.
+\end{itemize}
+
+An additional confound is annotation leakage through the evaluator itself. If the same heuristic defines both $C^\star$ and $\widehat{C}$, apparent trigger consistency is inflated. Stronger studies should separate benchmark annotation from deployed-checker implementation.
+
+\section{Contract pipeline diagram}
+\begin{figure}[t]
+\centering
+\resizebox{\linewidth}{!}{%
+\begin{tikzpicture}[node distance=1.8cm,>=Stealth]
+\node[draw,rounded corners,align=center] (q) {Query $q$};
+\node[draw,rounded corners,right=of q,align=center] (c) {Trigger check\\$C(q,a,p)$};
+\node[draw,rounded corners,right=of c,align=center] (k) {Consequence map\\$K(q,a,p)$};
+\node[draw,rounded corners,right=of k,align=center] (o) {Allow / deny / transform};
+\draw[->] (q) -- (c);
+\draw[->] (c) -- (k);
+\draw[->] (k) -- (o);
 \end{tikzpicture}
-\caption{Expected robustness ordering under stronger enforcement.}
+}
+\caption{The contract view separates rule description from rule execution.}
+\label{fig:jc-flow}
 \end{figure}
 
-\section{Formal Setup}
-Let $q$ be a query, $p$ a policy clause, $C(q,a)$ a trigger predicate, and $K(a,q)$ a consequence map. Then the contract decision is
+\begin{figure}[t]
+\centering
+\resizebox{\linewidth}{!}{%
+\begin{tikzpicture}[node distance=1.7cm,>=Stealth]
+\node[draw,rounded corners,align=center] (a) {Prompt-only rule\\natural-language instruction};
+\node[draw,rounded corners,right=of a,align=center] (b) {External trigger\\evaluation};
+\node[draw,rounded corners,right=of b,align=center] (c) {Consequence\\selection};
+\node[draw,rounded corners,right=of c,align=center] (d) {Observed outcome\\allow / deny / transform};
+\draw[->] (a) -- node[above] {baseline} (b);
+\draw[->] (b) -- node[above] {if fired} (c);
+\draw[->] (c) -- (d);
+\draw[->,dashed,bend left=20] (a) to node[below] {no external check} (d);
+\end{tikzpicture}
+}
+\caption{Why prompt-only rules and externally evaluated contracts differ. The dashed path indicates collapse of rule wording and rule execution into one generation step.}
+\label{fig:jc-contrast}
+\end{figure}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.46\linewidth]{figures/finite_state_machine_example_with_comments.pdf}
+\caption{A public-domain-style state-machine view is a useful analogue for contract enforcement because it makes state transitions explicit rather than leaving them latent in free-form generation. Included from Wikimedia Commons under CC0 \citep{wikimedia_fsm_example}.}
+\label{fig:jc-fsm}
+\end{figure}
+
+\section{Seed experiment}
+\subsection{Setup}
+The seed experiment was run on nine public benchmark examples using \texttt{google/flan-t5-small}. The purpose was not to claim robust jailbreak resistance, but to validate the benchmark logic and produce a first measured contrast between prompt-only and externalized enforcement.
+
+\subsection{Aggregate results}
+\begin{table}[t]
+\centering
+\caption{Aggregate policy comparison on the public seed benchmark. ASR: attack success rate; BPR: benign prompt refusal rate; TC: trigger consistency; CC: consequence consistency.}
+\label{tab:jc-seed}
+\begin{tabular}{lcccc}
+\toprule
+Mode & ASR & BPR & TC & CC \\
+\midrule
+Prompt-only & 0.4000 & 1.0000 & 0.3333 & 0.3333 \\
+Full contract & 0.2000 & 0.0000 & 0.8889 & 0.8889 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The seed-scale contrast yields
 \[
-d(q,p)=
-\begin{cases}
-K(a,q), & C(q,a)=1,\\
-\mathrm{allow}, & C(q,a)=0.
-\end{cases}
+T_J = 0.4000-0.2000 = 0.2000.
 \]
+At this scale, the contract baseline halves attack success rate while also removing benign over-refusal on the available sample.
 
-\section{Constrained Objective}
-Let the unconstrained action be
-\[
-a^*=\arg\max_a U(a\mid q).
-\]
-Under a vow-like constraint, the feasible set becomes
-\[
-F(q,p)=\{a : C(q,a)=0\},
-\]
-and the constrained action is
-\[
-a_c=\arg\max_{a\in F(q,p)} U(a\mid q).
-\]
-If no feasible action exists, the consequence function applies a safe fallback.
+\subsection{Attack-class breakdown}
+\begin{table}[t]
+\centering
+\caption{Attack success rates by attack class on the seed benchmark.}
+\label{tab:jc-class}
+\begin{tabular}{lcc}
+\toprule
+Attack class & Prompt-only ASR & Contract ASR \\
+\midrule
+Direct attack & 0.00 & 0.00 \\
+Roleplay attack & 0.50 & 0.50 \\
+Paraphrase attack & 1.00 & 0.00 \\
+\bottomrule
+\end{tabular}
+\end{table}
 
-\section{Auxiliary Risk Model}
-Let
-\[
-z(q)=[k(q),o(q),r(q),t(q)],
-\]
-and define
-\[
-s(q)=w_k k(q)+w_o o(q)+w_r r(q)+w_t t(q).
-\]
-A thresholded implementation uses
-\[
-d(q,p)=\mathrm{deny}\;\text{if}\; s(q)\ge \tau,\;\text{else allow}.
-\]
+\begin{figure}[t]
+\centering
+\includegraphics[width=\linewidth]{figures/judgment_chain_seed_results.png}
+\caption{Measured seed-scale behavior. Left: aggregate policy metrics. Right: attack success rates broken down by attack class.}
+\label{fig:jc-seed}
+\end{figure}
 
-\section{Evaluation}
-Let $TP, TN, FP, FN$ carry their usual meanings. Then
-\[
-ASR=\frac{FN}{TP+FN},
-\quad
-Precision_{\mathrm{deny}}=\frac{TP}{TP+FP},
-\quad
-Recall_{\mathrm{deny}}=\frac{TP}{TP+FN}.
-\]
-The benchmark implemented in \texttt{run\_contract\_benchmark.py} compares a prompt-only baseline to a vow-style external contract layer.
+\subsection{Interpretation}
+The roleplay result is especially useful. It shows that a contract layer can improve stability without solving semantic indirection in general. Direct overrides were easy for both systems. The substantive gain arose on the paraphrase-style restart attack and on benign prompt handling, where the prompt-only rule collapsed into blanket denial. This is precisely the sort of separation that the contract vocabulary is meant to capture.
 
-\section{Related Work}
-This study is closest to constitutional prompting, jailbreak defense, and prompt-injection research, but its narrower target is formal trigger-consequence semantics. The main question is not whether rules help in general, but whether explicit semantic contracts behave more reliably than free-text rules.
+\section{Discussion}
+The seed experiment does not prove that linguistic smart contracts are secure. It does, however, show that the distinction between rule statement and rule execution is empirically meaningful. A prompt-only rule and an externally checked rule can exhibit very different profiles even on the same small benchmark. That observation alone justifies a contract-style evaluation language.
 
-\section{Assumptions}
-This study assumes that trigger conditions can be defined with enough stability to be monitored externally, that attack success rate is an appropriate first-order robustness metric, and that matched benign prompts can expose the cost of stricter enforcement.
+The broader theoretical implication is that contracts can be layered. A mature system may combine lexical triggers, semantic classifiers, retrieval provenance checks, tool-sensitive policies, and consequence-specific rewrites. The present baseline is intentionally much simpler. Its value lies in keeping both success and failure legible enough to measure.
 
-\section{Formal Claim Structure}
+There is also a practical lesson here. Over-refusal and under-enforcement are not symmetric nuisances; they are distinct failure modes that call for different instrumentation. A benchmark that records only refusal rates can make a brittle system look conservative rather than confused. The contract framing is useful precisely because it forces those modes apart.
 
-\subsection{Definition}
-A linguistic smart contract is a policy object with an explicit trigger condition and a binding consequence that is executed independently of the model's willingness to comply.
+More broadly, the framework suggests a shift in how policy prompts should be studied. Instead of asking whether a rule sounds comprehensive, the sharper question is whether its trigger can be recognized consistently and whether its consequence remains stable once activated. That framing makes evaluation less rhetorical and more comparable across deployments.
 
-\subsection{Proposition J1}
-Explicit trigger-consequence semantics reduce attack success rate relative to prompt-only rules.
+\section{Limitations}
+The current paper has five practical limitations.
+\begin{enumerate}[leftmargin=*]
+\item The benchmark is small and cannot sustain strong inferential claims.
+\item The current trigger logic is deliberately crude and therefore underestimates what a richer contract system might achieve.
+\item The seed run is single-model and does not address cross-model robustness.
+\item The attack distribution is incomplete; indirect injection, long-context contamination, and tool-mediated attacks remain out of scope.
+\item The present benchmark focuses on response denial as the primary consequence, leaving more nuanced transformations largely untested.
+\item The present evidence still emphasizes prompt-surface attacks; retrieval-mediated and memory-mediated injection pathways require dedicated follow-up evaluation.
+\end{enumerate}
 
-\subsection{Test Statistic for J1}
-Compare $ASR$ between a prompt-only baseline and a contract-enforced system on matched attack families.
-
-\subsection{Decision Rule for J1}
-Support J1 only if the contract system yields a lower $ASR$ without collapsing benign-task acceptance.
-
-\subsection{Null Hypothesis for J1}
-Explicit trigger-consequence semantics do not improve attack success rate relative to prompt-only rules.
-
-\subsection{Effect-Size Target for J1}
-The target is a robust reduction in $ASR$ that persists under paraphrase and stronger attack families while preserving acceptable benign throughput.
-
-\subsection{Control Condition for J1}
-Compare against a prompt-only baseline and, where possible, a simpler keyword-filter baseline.
-
-\subsection{Confound Checklist for J1}
+\section{Future work}
+The most immediate extensions are:
 \begin{itemize}[leftmargin=*]
-\item attack prompts overly matched to the explicit trigger vocabulary,
-\item benign prompts too easy,
-\item evaluation restricted to one attack family,
-\item hidden reliance on shallow keyword filters.
+\item scaling the benchmark to larger public prompt-injection corpora,
+\item adding semantic paraphrase families rather than single attack strings,
+\item testing multi-stage consequence maps beyond simple denial,
+\item evaluating open- and closed-weight models under the same contract benchmark,
+\item and introducing utility-sensitive scoring where helpful transformation is rewarded relative to brute refusal.
 \end{itemize}
 
-\subsection{Failure Mode for J1}
-J1 fails if the measured $ASR$ improvement disappears under paraphrase or stronger attack variants.
-
-\subsection{Proposition J2}
-Explicit trigger semantics reduce paraphrase sensitivity of policy behavior.
-
-\subsection{Test Statistic for J2}
-Measure decision consistency across semantically equivalent rewordings of policy-relevant prompts.
-
-\subsection{Decision Rule for J2}
-Support J2 only if trigger activation and final decisions remain stable under paraphrase families.
-
-\subsection{Null Hypothesis for J2}
-Explicit trigger semantics do not reduce policy sensitivity to semantic rewording.
-
-\subsection{Effect-Size Target for J2}
-The target is a measurable increase in decision consistency across paraphrase-equivalent prompts.
-
-\subsection{Control Condition for J2}
-Use paraphrase sets spanning lexical, syntactic, and discourse-level variations with preserved meaning.
-
-\subsection{Confound Checklist for J2}
-\begin{itemize}[leftmargin=*]
-\item paraphrases that subtly alter meaning,
-\item annotation errors in paraphrase equivalence,
-\item inconsistent trigger parsing,
-\item benchmark prompts too narrow to test semantic robustness.
-\end{itemize}
-
-\subsection{Failure Mode for J2}
-J2 fails if small rewordings produce inconsistent trigger activation or consequence selection.
-
-\subsection{Proposition J3}
-Externalized consequence execution reduces rule erosion under jailbreak pressure.
-
-\subsection{Test Statistic for J3}
-Compare denial precision, denial recall, and consequence-execution consistency between prompt-only and externally enforced variants.
-
-\subsection{Decision Rule for J3}
-Support J3 only if externalized enforcement preserves policy decisions under direct and indirect attack prompts.
-
-\subsection{Null Hypothesis for J3}
-Externalized consequence execution does not reduce rule erosion beyond simpler enforcement alternatives.
-
-\subsection{Effect-Size Target for J3}
-The target is a measurable gain in denial precision and denial recall under adversarial pressure without overwhelming benign false positives.
-
-\subsection{Control Condition for J3}
-Compare against prompt-only rules and lightweight filters under the same attack/benign split.
-
-\subsection{Confound Checklist for J3}
-\begin{itemize}[leftmargin=*]
-\item artificially easy attack detection,
-\item excessive benign denial rates,
-\item consequence rules that merely restate the benchmark labels,
-\item missing indirect-attack coverage.
-\end{itemize}
-
-\subsection{Failure Mode for J3}
-J3 fails if the external mechanism behaves like a shallow keyword filter or produces excessive benign false positives.
-
-\section{Falsifiers}
-The theory is weakened if trigger behavior is unstable under rewording, if attack success rate does not improve, or if benign false positives become too large to justify the gain in robustness.
-
-\section{Evidence and Proof Standard}
-Evidence means measurable robustness gains on matched attack sets. Strong evidence requires paraphrase stability, stronger attacks, and benign-utility checks. Proof, in the empirical sense, requires superiority over prompt-only rules without a simpler explanation such as shallow keyword matching.
+\section{Related work}
+This study sits at the intersection of constitutional alignment, guardrail engineering, and adversarial robustness. Constitutional AI motivates rule-guided behavior shaping \citep{bai2022constitutional}. Guardrail work broadens this to deployment-time control layers \citep{liu2024guardrails}. Prompt injection studies show how context itself becomes an adversarial channel \citep{greshake2023promptinjection,yi2024jailbreaksurvey}. The present contribution is narrower: it supplies a measurable contract formulation that distinguishes triggers, consequences, and utility-sensitive failure.
 
 \section{Conclusion}
-The publishable claim is modest: explicit trigger-consequence semantics offer a clearer and more testable enforcement model than prompt-visible rules alone.
+The phrase ``linguistic smart contract'' should be earned, not granted by rhetoric. The present seed study is small, but it already shows that rule execution can be measured separately from rule wording. That distinction is where a stronger theory of jailbreak resistance begins.
 
-\nocite{*}
-\bibliographystyle{plain}
+\section*{Declarations}
+\paragraph{Funding} No external funding was received for this work.
+\paragraph{Competing interests} The author declares no competing interests.
+\paragraph{Data and materials availability} The benchmark prompts are derived from publicly available datasets and are available from the corresponding author upon reasonable request.
+\paragraph{Code availability} The analysis code used for measurement is available from the corresponding author upon reasonable request.
+\paragraph{Author contributions} Aryan Singh Chandel: conceptualization, methodology, formalization, analysis, writing---original draft, writing---review and editing.
+
+\bibliographystyle{spbasic}
 \bibliography{references}
 \end{document}

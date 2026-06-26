@@ -1,9 +1,8 @@
-﻿# Research Papers
+# Research Papers
 
-Central index for publication artifacts and submission packages.
+This folder is reserved for final exported deliverables:
 
-## Available Packages
-- [SEF_v1](./SEF_v1): arXiv/ECCC draft, IEEE submission PDF, and verification review doc.
+- publication PDF versions
+- DOCX versions for submission workflows
 
-- [faang_research_paper.docx](./faang_research_paper.docx): FAANG interview preparation research draft with methodology and strategy notes.
-
+The source LaTeX projects live in their respective research folders.
