@@ -48,7 +48,7 @@ The motivating idea of SecureParseNet is simple: if the segmentation output is s
 \item We scaffold the supplied figures and table into a fuller manuscript structure for later empirical expansion.
 \end{enumerate}
 
-\section{Formal setup}
+\section{Formal Setup}
 Let $X\in[0,1]^{H\times W\times C}$ be an input image, let $E$ and $D$ denote encoder and decoder, and let $Y_{\mathrm{seg}}=D(E(X))$ be the segmentation probability map.
 
 \begin{definition}[Low-frequency coefficient block]
@@ -93,6 +93,7 @@ where $\lambda\ge 0$ balances semantic performance and integrity consistency.
 
 \begin{table}[t]
 \centering
+\small
 \caption{Core notation for SecureParseNet.}
 \label{tab:spn-notation}
 \begin{tabular}{ll}
@@ -110,7 +111,7 @@ $\mathcal{L}_{\mathrm{hash}}$ & integrity-head objective \\
 \end{tabular}
 \end{table}
 
-\section{Assumptions and propositions}
+\section{Assumptions and Propositions}
 \begin{assumption}[Low-frequency structural persistence]
 Semantically meaningful scene structure is more stable under small perturbations in low-frequency coefficient space than adversarial high-frequency corruption is.
 \end{assumption}
@@ -147,10 +148,10 @@ If low-frequency structure is preserved in clean predictions but disrupted under
 The architecture is deployment-useful only if integrity deviation rises before semantic failure becomes silent; that is, detection must remain informative in attack regimes where IoU is already declining.
 \end{proposition}
 
-\subsection*{Null hypothesis}
+\subsection*{Null Hypothesis}
 The differentiable integrity head does not improve detection of adversarial corruption beyond what can be inferred from segmentation degradation alone.
 
-\subsection*{Effect-size target}
+\subsection*{Effect-Size Target}
 The source paper motivates a strong target in which integrity deviation increases by orders of magnitude under attack while latency overhead remains negligible.
 
 \section{Architecture}
@@ -175,10 +176,10 @@ SecureParseNet consists of a lightweight segmentation backbone and an auxiliary 
 \end{figure}
 
 \section{Methodology}
-\subsection{Differentiable spectral hashing}
+\subsection{Differentiable Spectral Hashing}
 The supplied source paper uses a 2D transform followed by soft thresholding of an $8\times 8$ low-frequency block. This is a sensible design because it moves the integrity test away from pixelwise noise and toward coarser scene structure \citep{zauner2010implementation}. The temperature parameter $\beta$ controls the smoothness of the binarization surrogate. In matrix form, the monitored coefficients are those in $L(Y_{\mathrm{seg}})$, and the training signal is backpropagated through the full transform-threshold chain.
 
-\subsection{Primary estimands}
+\subsection{Primary Estimands}
 We separate three quantities:
 \[
 T_{\mathrm{IoU}}(\epsilon)=\mathrm{IoU}(\epsilon)-\mathrm{IoU}(0),
@@ -192,7 +193,7 @@ T_{\mathrm{flag}}(\epsilon)=\Pr\!\big(T_{\mathrm{det}}(X,\epsilon)>\tau_{\mathrm
 \]
 where $\tau_{\mathrm{det}}$ is a declared alarm threshold. A good defense need not preserve perfect IoU at every attack strength, but it should make $T_{\mathrm{hash}}$ and $T_{\mathrm{flag}}$ diagnostically informative.
 
-\subsection{Operating-characteristic formulation}
+\subsection{Operating-Characteristic Formulation}
 For a distribution of clean and attacked inputs, the integrity head should be evaluated by the pair
 \[
 \mathrm{TPR}(\tau)=\Pr(T_{\mathrm{det}}>\tau\mid Y=1),
@@ -201,14 +202,14 @@ For a distribution of clean and attacked inputs, the integrity head should be ev
 \]
 where $Y=1$ denotes attacked inputs. Reporting $\mathrm{TPR}$ without $\mathrm{FPR}$ is insufficient for deployment claims.
 
-\subsection{Paired robustness estimator}
+\subsection{Paired Robustness Estimator}
 When each clean sample $X_i$ is paired with attacked variants $\mathcal{A}_{\epsilon}(X_i)$, the natural integrity contrast is
 \[
 \Delta_{\mathrm{pair}}(\epsilon)=\frac{1}{n}\sum_{i=1}^{n}\left[T_{\mathrm{det}}(X_i,\epsilon)-T_{\mathrm{det}}(X_i,0)\right].
 \]
 This paired form removes between-image structural variance from the primary detection analysis.
 
-\subsection{Effect-size estimand}
+\subsection{Effect-Size Estimand}
 For a fixed attack budget $\epsilon$, define the standardized integrity-separation effect size
 \[
 g_{\mathrm{int}}(\epsilon)=
@@ -217,14 +218,14 @@ g_{\mathrm{int}}(\epsilon)=
 \]
 This quantity is useful because it is invariant to the absolute scaling of the hash metric.
 
-\subsection{Threshold calibration}
+\subsection{Threshold Calibration}
 The alarm threshold should be selected on held-out clean and perturbed validation sets by minimizing
 \[
 \widehat{\mathcal{R}}(\tau)=c_{\mathrm{miss}}\widehat{\Pr}(T_{\mathrm{det}}\le \tau\mid Y=1)+c_{\mathrm{false}}\widehat{\Pr}(T_{\mathrm{det}}>\tau\mid Y=0),
 \]
 with declared costs $c_{\mathrm{miss}},c_{\mathrm{false}}>0$.
 
-\subsection{Decision rule}
+\subsection{Decision Rule}
 The integrity mechanism counts as supported only if three conditions hold together on held-out attack families:
 \begin{enumerate}[leftmargin=*]
 \item $\Delta_{\mathrm{pair}}(\epsilon)>0$ for the declared attack budgets;
@@ -232,13 +233,13 @@ The integrity mechanism counts as supported only if three conditions hold togeth
 \item the integrity gain is not purchased by catastrophic semantic collapse, that is, the IoU drop must not be the sole driver of the signal.
 \end{enumerate}
 
-\subsection{Recommended inference protocol}
+\subsection{Recommended Inference Protocol}
 The relevant resampling unit is the image or scene, not the pixel. Accordingly, confidence intervals for $\Delta_{\mathrm{pair}}(\epsilon)$, $g_{\mathrm{int}}(\epsilon)$, and $\mathrm{AUC}(T_{\mathrm{det}})$ should be obtained through paired bootstrap resampling over scenes. Where multiple attack strengths are evaluated per image, cluster-preserving bootstrap or repeated-measures modeling is preferable to naive pooling.
 
-\subsection{Control condition}
+\subsection{Control Condition}
 The natural control is a matched segmentation network trained without the integrity head. That comparison is not fully reported in the source PDF, so this rebuilt manuscript treats it as a required next-step baseline.
 
-\subsection{Failure modes and confounds}
+\subsection{Failure Modes and Confounds}
 \begin{itemize}[leftmargin=*]
 \item integrity deviation may increase under benign distribution shift, not only attack,
 \item low-frequency hashing may miss small but semantically catastrophic local attacks,
@@ -248,11 +249,12 @@ The natural control is a matched segmentation network trained without the integr
 
 An additional confound is surrogate collapse: if $\mathcal{L}_{\mathrm{hash}}$ merely tracks segmentation confidence, then integrity deviation may be redundant with existing uncertainty scores rather than providing independent protection.
 
-\section{Reported evidence from the source paper}
+\section{Reported Evidence from the Source Paper}
 The provided PDF reports stable joint optimization and a strong integrity signal under FGSM perturbation. We preserve those results here in explicit manuscript form.
 
 \begin{table}[t]
 \centering
+\small
 \caption{Integrity deviation and segmentation quality reported under FGSM attacks in the source paper.}
 \label{tab:spn-fgsm}
 \begin{tabular}{lcc}
@@ -286,7 +288,7 @@ The main strength of SecureParseNet is architectural clarity. It does not rely s
 
 The proposal is also methodologically interesting because it shifts some robustness pressure away from input-space preprocessing and toward output-space self-consistency. That is a distinct angle from adversarial training or randomized smoothing \citep{madry2018towards,cohen2019randomized}. Whether it is sufficient on its own remains open, but it is conceptually strong enough to justify deeper follow-up.
 
-\section{Limitations and future work}
+\section{Limitations and Future Work}
 The current manuscript is constrained by the brevity of the supplied PDF and by the absence of a full replication package. The most important next steps are:
 \begin{enumerate}[leftmargin=*]
 \item compare against matched segmentation-only and adversarial-training baselines,

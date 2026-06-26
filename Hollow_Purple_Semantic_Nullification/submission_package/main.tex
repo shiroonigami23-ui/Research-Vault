@@ -67,7 +67,7 @@ The question in this paper is narrower than generic ``reasoning failure.'' We as
 \item We report a public-data seed measurement on three SNLI-derived prompt families using a fixed model and fixed decoding protocol.
 \end{enumerate}
 
-\section{Formal setup}
+\section{Formal Setup}
 Let $x^{(0)}$ denote a matched control prompt and $x^{(c)}$ a contradiction-bearing prompt. Let $p_\theta(\cdot \mid x_{<t})$ be the next-token distribution at position $t$, and let $h_\ell(x)\in\mathbb{R}^{d_\ell}$ be a layer summary at layer $\ell$.
 
 \begin{definition}[Contradiction depth]
@@ -126,6 +126,7 @@ The threshold conjecture predicts that $G(\tau)$ becomes positive on a nondegene
 
 \begin{table}[t]
 \centering
+\small
 \caption{Core notation used throughout the manuscript.}
 \label{tab:hp-notation}
 \begin{tabular}{ll}
@@ -144,7 +145,7 @@ $\tau$ & contradiction-depth threshold under the theory \\
 \end{tabular}
 \end{table}
 
-\section{Assumptions and propositions}
+\section{Assumptions and Propositions}
 \begin{assumption}[Prompt comparability]
 Matched prompt families preserve topic, approximate length, discourse mode, and lexical rarity closely enough that contradiction depth is the main manipulated factor.
 \end{assumption}
@@ -184,17 +185,18 @@ If semantic nullification is not a one-template artifact, then the mean family c
 remains positive under leave-one-family-out re-estimation over the benchmark family set $\mathcal{F}$.
 \end{proposition}
 
-\subsection*{Null hypothesis}
+\subsection*{Null Hypothesis}
 After controlling for semantic density, topic, and approximate length, contradiction-bearing prompts do not produce a larger nullification index than non-contradictory difficulty controls.
 
-\subsection*{Effect-size target}
+\subsection*{Effect-Size Target}
 For an early-stage benchmark, a practically meaningful signal is a standardized mean difference of at least $0.5$ in $N(x)$ between contradiction-bearing prompts and difficulty-matched controls.
 
-\section{Benchmark design}
+\section{Benchmark Design}
 Each prompt family contains four variants: a coherent control, a non-contradictory difficulty control, an explicit contradiction, and a nested contradiction. This structure is deliberately stricter than a simple contradiction-versus-control split because contradiction often co-occurs with increased semantic density.
 
 \begin{table}[t]
 \centering
+\small
 \caption{Condition structure for the semantic nullification benchmark.}
 \label{tab:hp-conditions}
 \begin{tabular}{p{0.22\linewidth}p{0.18\linewidth}p{0.44\linewidth}}
@@ -211,6 +213,7 @@ Nested contradiction & high & multiple cross-clause incompatible commitments \\
 
 \begin{table}[t]
 \centering
+\small
 \caption{Measured variables and their inferential role.}
 \label{tab:hp-variables}
 \begin{tabular}{p{0.28\linewidth}p{0.18\linewidth}p{0.40\linewidth}}
@@ -225,7 +228,7 @@ Nullification index & $N(x)$ & primary aggregate endpoint \\
 \end{tabular}
 \end{table}
 
-\section{Identification strategy}
+\section{Identification Strategy}
 The identification problem is straightforward to state: contradiction is often confounded with generic difficulty, lexical rarity, or benchmark artifacts. The benchmark addresses this in three ways. First, each contradiction prompt is paired with a coherent control and a difficulty-matched non-contradictory control. Second, contradiction can be realized through lexical, temporal, causal, role-based, or world-knowledge incompatibility rather than through overt negation alone. Third, the benchmark is evaluated at family level so that one striking item cannot dominate interpretation.
 
 \begin{figure}[t]
@@ -268,10 +271,10 @@ The identification problem is straightforward to state: contradiction is often c
 \end{figure}
 
 \section{Methodology}
-\subsection{Model and public data}
+\subsection{Model and Public Data}
 The seed benchmark is populated from public SNLI-derived contradiction families \citep{bowman2015snli}. The current seed run uses \texttt{distilgpt2} under fixed decoding settings so that observed variation is attributable to prompt family differences rather than to policy drift during sampling.
 
-\subsection{Primary test statistic}
+\subsection{Primary Test Statistic}
 Let $\mathcal{X}_{\text{contr}}$ denote contradiction-bearing prompts and $\mathcal{X}_{\text{ctrl}}$ the matched coherent controls. The primary contrast is
 \[
 T_N=\overline{N}_{\text{contr}}-\overline{N}_{\text{ctrl}}.
@@ -288,14 +291,14 @@ Because a single family can be unusually noisy, we also estimate the family-aggr
 \]
 and treat sign stability of $\widehat{\delta}_f$ across families as part of the inferential target rather than a secondary diagnostic.
 
-\subsection{Estimator and uncertainty}
+\subsection{Estimator and Uncertainty}
 Let $B$ denote the number of bootstrap resamples drawn at family level. The reported uncertainty interval for $T_N^{\star}$ is
 \[
 \left[\widehat{T}_{N,(0.025)}^{\star},\widehat{T}_{N,(0.975)}^{\star}\right],
 \]
 where the quantiles are taken over bootstrap replicates that resample prompt families, not individual generations. This choice aligns the uncertainty estimate with the unit of scientific generalization.
 
-\subsection{Standardized effect size}
+\subsection{Standardized Effect Size}
 To complement raw contrasts, we recommend the family-pooled standardized effect
 \[
 g_N=\frac{\overline{N}_{\text{contr}}-\overline{N}_{\text{diff}}}
@@ -303,21 +306,21 @@ g_N=\frac{\overline{N}_{\text{contr}}-\overline{N}_{\text{diff}}}
 \]
 This prevents small but noisy raw differences from being mistaken for substantive contradiction effects.
 
-\subsection{Regression-form identification}
+\subsection{Regression-Form Identification}
 To separate contradiction effects from correlated prompt properties, we recommend the family-fixed-effects model
 \[
 N(x)=\alpha_{f(x)}+\beta_d d(x)+\beta_\ell L(x)+\beta_r R(x)+\beta_q Q(x)+\varepsilon_x,
 \]
 where $\alpha_{f(x)}$ is a family intercept, $L(x)$ is normalized length, $R(x)$ is lexical rarity, and $Q(x)$ is semantic-density or proposition-count proxy. Under the theory, $\beta_d>0$ should persist after adjustment.
 
-\subsection{Randomization test}
+\subsection{Randomization Test}
 Because benchmark families are small, a finite-sample alternative to asymptotic inference is a within-family label permutation test. Let $\pi_f$ range over condition-label permutations preserving family structure. The exact or Monte Carlo $p$-value is
 \[
 p_{\mathrm{perm}}=\Pr_{\pi}\!\left(\widehat{T}_{N,\pi}^{\star}\ge \widehat{T}_{N}^{\star}\right).
 \]
 This test is valid under exchangeability of contradiction and difficulty labels within matched families.
 
-\subsection{Decision rule}
+\subsection{Decision Rule}
 The theory is treated as provisionally supported only if three conditions hold jointly:
 \begin{enumerate}[leftmargin=*]
 \item $T_N^{\star}>0$ with a pre-registered confidence interval excluding zero;
@@ -327,10 +330,10 @@ The theory is treated as provisionally supported only if three conditions hold j
 
 For a more stringent benchmark, all three conditions should hold together with $\widehat{\beta}_d>0$ in the regression specification and $p_{\mathrm{perm}}<0.05$ under family-preserving permutations.
 
-\subsection{Control condition}
+\subsection{Control Condition}
 The control condition preserves topic, discourse form, and approximate proposition count while removing incompatible commitments. The difficulty control preserves density and elaboration while keeping the prompt jointly satisfiable.
 
-\subsection{Confound checklist}
+\subsection{Confound Checklist}
 \begin{itemize}[leftmargin=*]
 \item overt negation markers that act as superficial cues,
 \item lexical rarity raising entropy without contradiction,
@@ -339,22 +342,23 @@ The control condition preserves topic, discourse form, and approximate propositi
 \item response-scoring schemes that confuse uncertainty with inconsistency.
 \end{itemize}
 
-\subsection{What counts as evidence}
+\subsection{What Counts as Evidence}
 This theory is empirical rather than deductive. Evidence in favor of semantic nullification requires replicated between-condition contrasts, stability across paraphrase families, and separation from difficulty controls. A formal proof is available only for the benchmark definitions or estimator properties, not for the existence of the phenomenon itself.
 
 More specifically, we treat the theory as strengthened when four items align: positive $T_N^{\star}$, positive $\widehat{\bar{\delta}}$, no single family dominating the sign of the aggregate effect, and no alternative observable such as lexical rarity explaining the contrast better in matched regression checks.
 
-\subsection{What falsifies the theory}
+\subsection{What Falsifies the Theory}
 The theory weakens materially if contradiction fails to exceed difficulty controls, if drift is explained better by lexical rarity than by incompatibility, or if the effect vanishes once paraphrase and negation cues are balanced. These are not peripheral caveats; they are the main exit routes from the hypothesis.
 
 An especially strong falsifier is sign reversal after covariate control: if $\widehat{\beta}_d\le 0$ in the adjusted model across multiple model families, then the contradiction-depth variable is not isolating a distinct instability process.
 
-\section{Seed measurement}
-\subsection{Public-data run}
+\section{Seed Measurement}
+\subsection{Public-Data Run}
 We executed the seed benchmark on three public contradiction families using \texttt{distilgpt2}. The purpose of this pass was not to claim discovery of a new regime, but to verify that the benchmark and scoring pipeline produce interpretable values on real data.
 
 \begin{table}[t]
 \centering
+\small
 \caption{Seed-scale nullification indices measured on three public contradiction families.}
 \label{tab:hp-seed}
 \begin{tabular}{lcccc}
@@ -370,6 +374,7 @@ Family & Control & Difficulty & Explicit & Nested \\
 
 \begin{table}[t]
 \centering
+\small
 \caption{Condition-wise means across the three seed families.}
 \label{tab:hp-mean}
 \begin{tabular}{lc}
@@ -403,10 +408,10 @@ The present evidence therefore supports a restrained conclusion. It is reasonabl
 
 A useful consequence of the current null result is conceptual hygiene. It discourages treating contradiction as an intrinsically catastrophic signal and instead pushes the theory toward conditional claims about when incompatible commitments become measurably destabilizing. In that sense, the benchmark is already doing what a good theoretical instrument should do: it constrains the story, not just decorates it.
 
-\section{Related work}
+\section{Related Work}
 This study sits between vector semantics, contradiction benchmarks, and representation analysis. SimLex and counter-fitting work show why lexical opposition should not be treated as a one-dimensional geometric primitive \citep{hill2015simlex,mrksic2016counterfitting}. SNLI and ANLI provide large-scale contradiction supervision, though primarily as a classification problem \citep{bowman2015snli,nie2019anli}. The literature on NLI artifacts reminds us that contradiction benchmarks can overstate semantic competence when cues are superficial \citep{gururangan2018artifacts}. Finally, recent work at the border of neural and symbolic contradiction analysis reinforces the need to treat contradiction as a structured relation rather than as mere lexical mismatch \citep{feng2024neurosymbolic}.
 
-\section{Limitations and future work}
+\section{Limitations and Future Work}
 The paper has four immediate limitations. First, the seed benchmark is too small for strong statistical inference. Second, the present run uses one model and one decoding configuration, so it cannot distinguish model-specific quirks from general behavior. Third, the nullification index remains a designed aggregate rather than a validated latent construct. Fourth, the current benchmark still leans on contradiction families that originate in NLI-style data, which may import annotation regularities not present in open-ended prompting.
 
 The most direct next steps are clear: enlarge the public prompt pool, build paraphrase-balanced contradiction families, examine layer-specific drift instead of a single summary, and replicate the analysis across models with fixed reporting standards. Stronger versions of the study should also compare alternative index constructions, report annotation agreement for contradiction depth, and test whether intervention on specific clauses changes instability in predictable ways. If the effect persists under those stronger conditions, the theory becomes materially more credible. If it does not, the framework still succeeds by showing where the metaphor stops being technically useful.

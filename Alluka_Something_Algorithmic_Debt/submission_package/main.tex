@@ -83,7 +83,7 @@ In practice, prompts with similar token length can require very different servin
 \end{enumerate}
 
 \section{Model and estimands}
-\subsection{Cost decomposition}
+\subsection{Cost Decomposition}
 Let $x$ denote a prompt instance under a fixed serving configuration (model, decoding parameters, stage policy, and hardware/runtime). We decompose the total serving burden into
 \[
 C_{\text{total}}(x)=C_{\text{gen}}(x)+C_{\text{ver}}(x)+C_{\text{safe}}(x),
@@ -110,7 +110,7 @@ $m(x)$ & number of auxiliary stages \\
 \end{tabular}
 \end{table}
 
-\subsection{Ambition and algorithmic debt}
+\subsection{Ambition and Algorithmic Debt}
 \begin{definition}[Wish complexity]
 The ambition (wish complexity) of prompt $x$ is
 \[
@@ -143,7 +143,7 @@ Within a fixed serving configuration, define the marginal debt elasticity of amb
 This quantity distinguishes systems in which additional ambition produces roughly proportional overhead from systems in which overhead accelerates sharply.
 \end{definition}
 
-\subsection{Assumptions (measurement)}
+\subsection{Assumptions (Measurement)}
 Our goal is not to assert a mechanistic model of serving stacks, but to define estimands that can be measured under a declared protocol. We assume:
 \begin{enumerate}[leftmargin=*]
 \item \textbf{Cost separability:} $C_{\text{gen}}$, $C_{\text{ver}}$, and $C_{\text{safe}}$ can be estimated from logs with acceptable measurement error.
@@ -151,7 +151,7 @@ Our goal is not to assert a mechanistic model of serving stacks, but to define e
 \item \textbf{Operational relevance:} non-generation overhead is reflected in observable cost units (latency, energy, or auxiliary-token additions) rather than only in internal bookkeeping.
 \end{enumerate}
 
-\subsection{Primary estimand and hypothesis}
+\subsection{Primary Estimand and Hypothesis}
 The primary estimand is the association between ambition and debt under length control. Concretely, within narrow length strata (or with an explicit length covariate), we estimate the slope
 \[
 T_A = \hat{\beta}_{W\rightarrow AD}.
@@ -164,7 +164,7 @@ AD(x)=\beta_0+\beta_1W(x)+\beta_2L(x)+\beta_3Z(x)+\varepsilon_x,
 \]
 where $Z(x)$ collects declared confounds such as domain, retrieval dependence, or policy mode. The core empirical question is whether $\beta_1$ remains positive after these adjustments.
 
-\subsection{Secondary estimands}
+\subsection{Secondary Estimands}
 Two secondary quantities matter for interpretation. First, we estimate stage-share ratios
 \[
 \rho_{\mathrm{ver}}(x)=\frac{C_{\mathrm{ver}}(x)}{C_{\mathrm{total}}(x)},
@@ -173,7 +173,7 @@ Two secondary quantities matter for interpretation. First, we estimate stage-sha
 \]
 which localize where the debt originates. Second, we estimate the within-bin rank correlation between $W(x)$ and $AD(x)$ to test whether the theory survives without assuming linearity.
 
-\subsection{Stratified estimation}
+\subsection{Stratified Estimation}
 Let $\mathcal{B}$ denote length bins. A length-controlled aggregate slope may be estimated by
 \[
 \widehat{\beta}_{\mathrm{strat}}=
@@ -183,7 +183,7 @@ Let $\mathcal{B}$ denote length bins. A length-controlled aggregate slope may be
 \]
 where $\widehat{\beta}_b$ is the within-bin slope of $AD$ on $W$. This avoids treating length control as purely parametric when prompt distributions are irregular.
 
-\subsection{Monotonicity test statistic}
+\subsection{Monotonicity Test Statistic}
 If the theory is interpreted as an ordered-overhead claim, a simple nonparametric statistic is
 \[
 T_{\uparrow}=
@@ -193,7 +193,7 @@ T_{\uparrow}=
 \]
 where $\mathcal{P}$ is the set of length-matched prompt pairs. Values near $1/2$ indicate no systematic ordering beyond chance, whereas large values support monotone debt growth with ambition.
 
-\subsection{Inference and calibration}
+\subsection{Inference and Calibration}
 Uncertainty should be reported through prompt-family bootstrap resampling or by clustered standard errors when repeated prompts share templates or annotation pipelines. In addition, the ambition summary variable should be calibrated against its components by checking whether
 \[
 \operatorname{Var}\!\bigl(AD(x)\mid W(x)\bigr)
@@ -204,12 +204,12 @@ is materially larger than
 \]
 If the latter variance drops sharply, the scalar summary is too compressive and should not dominate interpretation.
 
-\subsection{Benchmark design (summary)}
+\subsection{Benchmark Design (Summary)}
 To avoid conflating verbosity with ambition, prompt families are constructed to be approximately length-matched while varying annotated depth $D(x)$, breadth $B(x)$, and risk $R(x)$. The benchmark records stage-wise costs (tokens, latency, and optionally energy) and stage outcomes (accepted, revised, blocked).
 
 The detailed annotation rubric, endpoint definitions, reproducibility checklist, stage taxonomy, and confound checklist are provided in Appendix~A.
 
-\subsection{Threats to validity (summary)}
+\subsection{Threats to Validity (Summary)}
 A central threat is misattribution: retrieval failures, context-window pathologies, or infrastructure latency may be incorrectly counted as verification overhead. Our protocol therefore requires explicit logging of stage triggers and, where applicable, retrieval events, together with sensitivity analyses that exclude dominated failure modes. Since the framework is empirical, evidence must be based on replicated measurements under declared configurations rather than on first-principles arguments about any particular serving system.
 
 Another threat is construct compression. If $W(x)$ is too coarse, then depth, breadth, and risk can trade off against one another in ways that flatten the observed signal. For that reason, the paper treats $W(x)$ as a benchmarked summary variable rather than an untouchable primitive; a serious evaluation should also report its components separately.
@@ -245,17 +245,18 @@ Training-time scaling laws motivate the broader question of regularities between
 \label{fig:alluka-owid}
 \end{figure}
 
-\section{Pilot study (seed measurement)}
+\section{Pilot Study (Seed Measurement)}
 \subsection{Setup}
 We conducted a pilot measurement to validate that the proposed logging and decomposition can be executed end-to-end. The pilot used nine public prompts spanning factual extraction, arithmetic reasoning, and medical multiple-choice questions. All runs used \texttt{google/flan-t5-small} under a fixed decoding and runtime configuration.
 
-\subsection{Measurement unit}
+\subsection{Measurement Unit}
 In the pilot, cost components were operationalized as stage-wise token counts. Verification and safety stages were invoked only when required by the benchmark metadata (i.e., the stage policy was externally specified rather than adaptively learned).
 
-\subsection{Aggregate result}
+\subsection{Aggregate Result}
 Table~\ref{tab:alluka-seed} reports the pilot aggregate for a single prompt family.
 \begin{table}[t]
 \centering
+\small
 \begin{tabular}{lccccc}
 \toprule
 Family & Mean $W$ & Mean $C_{\text{gen}}$ & Mean $C_{\text{ver}}$ & Mean $C_{\text{safe}}$ & Mean $AD$ \\
@@ -271,6 +272,7 @@ Family & Mean $W$ & Mean $C_{\text{gen}}$ & Mean $C_{\text{ver}}$ & Mean $C_{\te
 
 \begin{table}[t]
 \centering
+\small
 \caption{Seed-scale mean cost decomposition by prompt group.}
 \label{tab:alluka-groups}
 \begin{tabular}{lcccc}
@@ -291,12 +293,12 @@ MedMCQA & 50.0 & 75.0 & 79.0 & 3.1508 \\
 \label{fig:alluka-seed}
 \end{figure}
 
-\subsection{What is learned}
+\subsection{What Is Learned}
 The pilot indicates that, even for a small set of prompts, non-generation stages can contribute materially to total serving burden and can exceed base generation in the chosen unit. This supports the methodological claim that separating $C_{\text{gen}}$, $C_{\text{ver}}$, and $C_{\text{safe}}$ is practically relevant and measurable.
 
 The group-level pattern is also directionally informative. In the current pilot, the progression from SQuAD to GSM8K to MedMCQA is not merely a change in prompt length; it is a change in the amount of verification and safety machinery recruited around the base generator. That is exactly the distinction the debt framework is designed to expose.
 
-\subsection{What is not claimed}
+\subsection{What Is Not Claimed}
 The pilot is not a scaling result and does not establish a universal relationship between $W(x)$ and $AD(x)$. The sample size is too small for stable inference, and token accounting alone does not capture hardware- and system-dependent costs such as latency or energy. The pilot therefore serves only as a feasibility check for instrumentation and reporting; substantive conclusions require larger, pre-registered prompt families and replication across models and serving stacks.
 
 In particular, the pilot does not identify a universal elasticity parameter. Any claim about superlinear debt growth would require repeated measurements across ambition strata, explicit confidence intervals for $\mathcal{E}_{AD,W}$, and replication across serving policies.
@@ -319,12 +321,13 @@ Immediate next steps are straightforward: expand the prompt families, pre-regist
 If algorithmic debt is real, prompt design should be evaluated the way systems engineers evaluate hidden coupling: not by how dramatic the request sounds, but by how much extra machinery it quietly forces into the loop.
 
 \appendix
-\section{Supplementary benchmark specification}
+\section{Supplementary Benchmark Specification}
 This appendix collects protocol details that are referenced in the main text.
 
-\subsection{Annotated variables and endpoints}
+\subsection{Annotated Variables and Endpoints}
 \begin{table}[t]
 \centering
+\small
 \caption{Annotated benchmark variables used to score prompt ambition and to stratify prompt families.}
 \label{tab:bench-variables}
 \small
@@ -343,6 +346,7 @@ Debt ratio & $AD(x)$ & Non-generation overhead relative to base generation \\
 
 \begin{table}[t]
 \centering
+\small
 \caption{Primary measured endpoints and their role in the decision rule.}
 \label{tab:bench-endpoints}
 \small
@@ -359,9 +363,10 @@ Sequential burden & $SR(x)$ & Captures multi-stage orchestration load \\
 \end{tabular}
 \end{table}
 
-\subsection{Reproducibility checklist}
+\subsection{Reproducibility Checklist}
 \begin{table}[t]
 \centering
+\small
 \caption{Reproducibility checklist for an algorithmic-debt measurement run (implementation-agnostic).}
 \label{tab:repro-checklist}
 \small
@@ -381,9 +386,10 @@ Prompt release & Prompt families + annotations, or a clear access/availability s
 \end{tabular}
 \end{table}
 
-\subsection{Stage taxonomy}
+\subsection{Stage Taxonomy}
 \begin{table}[t]
 \centering
+\small
 \caption{Stage taxonomy for logging and for separating generation from non-generation overhead.}
 \label{tab:stage-taxonomy}
 \small
@@ -398,9 +404,10 @@ Safety & Policy risk elevated; filter/classifier invoked; refusal/rewrites possi
 \end{tabular}
 \end{table}
 
-\subsection{Common confounds}
+\subsection{Common Confounds}
 \begin{table}[t]
 \centering
+\small
 \caption{Common confounds and mitigations when estimating algorithmic debt under length control.}
 \label{tab:confounds}
 \small
@@ -419,6 +426,7 @@ Retrieval/pathology misattributed to verification & Verification stages triggere
 \section{Prompt Family Template (Reporting Checklist)}
 \begin{table}[t]
 \centering
+\small
 \begin{tabular}{p{0.22\linewidth}p{0.70\linewidth}}
 \toprule
 Item & What to report for each prompt family \\

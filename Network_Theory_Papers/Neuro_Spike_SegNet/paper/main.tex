@@ -48,7 +48,7 @@ The central claim of this paper is that redundancy in spiking segmentation can b
 \item We package the existing raster and energy figures into a reproducible manuscript scaffold suitable for later experimental expansion.
 \end{enumerate}
 
-\section{Formal setup}
+\section{Formal Setup}
 Let $x$ denote an input image encoded into a spike train over an inference horizon $t=1,\dots,T$. For neuron $i$ in layer $\ell$, let $V_i^\ell[t]$ be the membrane potential, $S_i^\ell[t]\in\{0,1\}$ the emitted spike, and $I_i^\ell[t]$ the synaptic current.
 
 \begin{definition}[Baseline LIF update]
@@ -112,6 +112,7 @@ This is the declared energy proxy for cross-model comparison in the current manu
 
 \begin{table}[t]
 \centering
+\small
 \caption{Core notation for Neuro-Spike SegNet.}
 \label{tab:nsn-notation}
 \begin{tabular}{ll}
@@ -129,7 +130,7 @@ $\Delta_{\mathrm{mIoU}}$ & segmentation accuracy retention gap \\
 \end{tabular}
 \end{table}
 
-\section{Assumptions and propositions}
+\section{Assumptions and Propositions}
 \begin{assumption}[Late-phase redundancy]
 For static or slowly changing scenes, a nontrivial fraction of spikes emitted in the second half of the inference window are redundant with respect to the semantic output map.
 \end{assumption}
@@ -165,13 +166,13 @@ Let $\mathrm{mIoU}_{\mathrm{gated}}$ and $\mathrm{mIoU}_{\mathrm{base}}$ denote 
 for an application-specific tolerance $\delta$.
 \end{proposition}
 
-\subsection*{Null hypothesis}
+\subsection*{Null Hypothesis}
 Sleep--wake membrane gating does not reduce late-phase spike rate or energy relative to a matched LIF baseline once segmentation retention is controlled.
 
-\subsection*{Effect-size target}
+\subsection*{Effect-Size Target}
 The original report implies a practically meaningful target of at least $30\%$ total spike-rate reduction with less than $2$ percentage points loss in mIoU.
 
-\section{Architecture and mechanism}
+\section{Architecture and Mechanism}
 Neuro-Spike SegNet uses an encoder--decoder segmentation pipeline in which all convolutional blocks are replaced by spiking counterparts. The encoder contracts spatial resolution and accumulates hierarchical features, the bottleneck integrates broader context, and the decoder restores resolution through transposed spiking convolutions with skip connections. Structurally, the design follows the same coarse-to-fine logic that makes U-Net-like segmentation effective, but replaces dense activations with event-driven state updates \citep{ronneberger2015unet}.
 
 \begin{figure}[t]
@@ -195,10 +196,10 @@ Neuro-Spike SegNet uses an encoder--decoder segmentation pipeline in which all c
 The mechanism is intentionally global in its current form: a shared phase controller changes the effective leak and threshold for all monitored units during the sleep interval. This keeps the hypothesis simple. Future variants could make the gate spatially adaptive or neuron-specific.
 
 \section{Methodology}
-\subsection{Input coding and simulation protocol}
+\subsection{Input Coding and Simulation Protocol}
 The source manuscript uses Poisson rate coding for grayscale inputs, with simulation horizon $T=60$ time steps. Wake and sleep phases each occupy half of the inference window. Training is described with AdamW, cosine annealing, and spike-MSE supervision on segmentation outputs.
 
-\subsection{Primary estimands}
+\subsection{Primary Estimands}
 We formalize three main estimands:
 \[
 T_R = R_{\mathrm{base}}(\mathcal{T}_S)-R_{\mathrm{gated}}(\mathcal{T}_S),
@@ -212,7 +213,7 @@ T_Q = \mathrm{mIoU}_{\mathrm{gated}}-\mathrm{mIoU}_{\mathrm{base}}.
 \]
 The manuscript is supported when $T_R>0$ and $T_E>0$ while $T_Q$ remains near zero from an application standpoint.
 
-\subsection{Paired scene-level estimator}
+\subsection{Paired Scene-Level Estimator}
 When baseline and gated runs are available for the same scene $j$, the natural estimator is paired:
 \[
 \widehat{T}_R=\frac{1}{n}\sum_{j=1}^{n}\left[
@@ -221,7 +222,7 @@ R_{\mathrm{base},j}(\mathcal{T}_S)-R_{\mathrm{gated},j}(\mathcal{T}_S)
 \]
 with analogous definitions for $\widehat{T}_E$ and $\widehat{T}_Q$. This removes between-scene activity heterogeneity from the primary comparison.
 
-\subsection{Phase-normalized contrasts}
+\subsection{Phase-Normalized Contrasts}
 To ensure that suppression is specific to the sleep interval rather than a global firing-rate collapse, define
 \[
 \Delta_R^{W}=R_{\mathrm{base}}(\mathcal{T}_W)-R_{\mathrm{gated}}(\mathcal{T}_W),
@@ -230,10 +231,10 @@ To ensure that suppression is specific to the sleep interval rather than a globa
 \]
 The intended mechanism predicts $\Delta_R^{S}\gg \Delta_R^{W}$.
 
-\subsection{Pareto admissibility}
+\subsection{Pareto Admissibility}
 For deployment, a parameter setting $(\lambda_{\mathrm{leak}},\lambda_{\mathrm{thresh}})$ is admissible only if no alternative setting yields both lower energy and higher mIoU. This converts the ablation into a Pareto-screening problem rather than an isolated hyperparameter sweep.
 
-\subsection{Decision rule}
+\subsection{Decision Rule}
 The gating mechanism is treated as supported only if the same parameter regime satisfies all of the following:
 \begin{enumerate}[leftmargin=*]
 \item $\widehat{T}_R>0$ with the bulk of scene-level contrasts positive;
@@ -242,10 +243,10 @@ The gating mechanism is treated as supported only if the same parameter regime s
 \item $\kappa_{\mathrm{sel}}>0$, ruling out global firing-rate collapse.
 \end{enumerate}
 
-\subsection{Inference protocol}
+\subsection{Inference Protocol}
 For replicated runs, each scene or sequence should be evaluated under multiple random encoding seeds, and uncertainty for $T_R$, $T_E$, and $T_Q$ should be reported with scene-level bootstrap intervals. Scene-level resampling is the relevant unit because per-time-step spikes are not independent observations.
 
-\subsection{Secondary stability statistic}
+\subsection{Secondary Stability Statistic}
 For dynamic scenes, one should additionally monitor
 \[
 T_{\mathrm{dyn}}=
@@ -255,10 +256,10 @@ T_{\mathrm{dyn}}=
 \]
 A strongly negative value would indicate that the gate is merely exploiting static-scene idleness and does not transfer to harder temporal settings.
 
-\subsection{Control condition}
+\subsection{Control Condition}
 The relevant control is a matched SNN segmentation model with identical topology, coding scheme, and simulation horizon but without phase-dependent modulation of leak and threshold.
 
-\subsection{Confounds and falsifiers}
+\subsection{Confounds and Falsifiers}
 \begin{itemize}[leftmargin=*]
 \item improvements caused by reduced simulation time rather than gating,
 \item gains driven by scene simplicity alone,
@@ -270,11 +271,12 @@ The theory is weakened if gated suppression appears equally strong on dynamic sc
 
 An additional falsifier is wake-phase collapse: if $\Delta_R^{W}$ is large, the mechanism is not selectively pruning late redundancy but simply reducing excitability everywhere.
 
-\section{Reported evidence from the source paper}
+\section{Reported Evidence from the Source Paper}
 The provided PDF reports a substantial reduction in sleep-phase activity and lower energy footprint relative to baselines. We preserve those observations here as structured evidence rather than as new experiments.
 
 \begin{table}[t]
 \centering
+\small
 \caption{Average spike rates reported in the source manuscript.}
 \label{tab:nsn-spike-rates}
 \begin{tabular}{lccc}
@@ -290,6 +292,7 @@ Total average & 28.1 Hz & 18.3 Hz & 34.8\% \\
 
 \begin{table}[t]
 \centering
+\small
 \caption{Reported gating-strength trade-off from the source manuscript.}
 \label{tab:nsn-ablation}
 \begin{tabular}{lcc}
@@ -322,7 +325,7 @@ The appealing feature of Neuro-Spike SegNet is that it treats redundancy as some
 
 This idea also gives the architecture a clearer niche within spiking vision research. Existing efficiency improvements often act through weight learning, surrogate gradients, or architectural compression \citep{fang2021deep,neftci2019surrogate}. The present mechanism instead intervenes at inference time by changing the physical interpretation of the neuron. That distinction is publishable in principle because it leads to different falsifiers and different deployment knobs.
 
-\section{Limitations and future work}
+\section{Limitations and Future Work}
 The current manuscript is still limited by its dependence on source-reported experiments rather than a fresh replication package. Several gaps remain:
 \begin{enumerate}[leftmargin=*]
 \item the energy model is proxy-based rather than hardware-measured,

@@ -69,7 +69,7 @@ Scope matters here. The Ricci-Convexity Lemma proved below is conditional and in
 \item We convert the original SEF idea into a research-standard theory paper with proof status separation, validation logic, and falsification criteria.
 \end{enumerate}
 
-\section{Formal setup}
+\section{Formal Setup}
 Let $x$ be an instance of an NP-complete optimization or decision problem of size $n$, and let $G_x=(V_x,E_x,w_x)$ denote an associated weighted problem graph.
 
 \begin{definition}[Weighted problem graph]
@@ -118,6 +118,7 @@ Write $\mathsf{Curv}(x)=1$ when the embedded manifold $M_x$ satisfies a declared
 
 \begin{table}[t]
 \centering
+\small
 \caption{Core notation for the SEF framework.}
 \label{tab:sef-notation}
 \begin{tabular}{ll}
@@ -136,7 +137,7 @@ $\mathsf{Curv}(x)$ & event that the required curvature condition holds \\
 \end{tabular}
 \end{table}
 
-\section{Assumptions and proof-status separation}
+\section{Assumptions and Proof-Status Separation}
 \begin{assumption}[Embedding access]
 The local descriptors needed to construct $\Phi_S$ can be computed in polynomial time in $n$ for the family under study.
 \end{assumption}
@@ -151,6 +152,7 @@ The embedding does not destroy optimization-relevant structure so severely that 
 
 \begin{table}[t]
 \centering
+\small
 \caption{Status of the main mathematical claims in the current manuscript.}
 \label{tab:sef-status}
 \small
@@ -192,7 +194,7 @@ Under $CD(0,d)$, the Bakry--\'Emery theory yields a Poincar\'e inequality with c
 \paragraph{Interpretation.}
 Lemma~\ref{lem:ricci-convexity} is a regularity statement, not an optimization theorem. Its conclusion is limited to preservation of a diffusion-relevant quantity, namely a lower bound on $\lambda_2$, within the subclass of instances for which the curvature assumptions are already valid.
 
-\section{The SEF conjecture}
+\section{The SEF Conjecture}
 \begin{proposition}[Conjectural SEF optimization implication]
 Suppose there exists a polynomial-time computable family of embeddings $\{\Phi_{S,x}\}$ and a fixed exponent $k$ such that, for every NP-complete instance $x$, the embedded manifold $M_x$ satisfies $CD(0,d)$ with $d=O(n^k)$ and the embedded objective $f_x$ contains no non-global critical structure capable of trapping admissible descent trajectories for superpolynomial time. Under those additional conditions, one may conjecture that a global optimum is recoverable in time $O(n^k)$.
 \end{proposition}
@@ -205,7 +207,7 @@ SEF-style curvature and spectral regularity, even after embedding, do not predic
 \subsection*{Effect-size target}
 For computational validation, a meaningful early effect would be a reproducible within-family association between curvature irregularity and solver cost after explicit control for instance size, density, and baseline spectral covariates.
 
-\section{Algorithmic form of the program}
+\section{Algorithmic Form of the Program}
 The SEF framework is most naturally operationalized as an analysis pipeline rather than as a finished solver.
 
 \begin{figure}[t]
@@ -232,6 +234,7 @@ The SEF framework is most naturally operationalized as an analysis pipeline rath
 
 \begin{table}[t]
 \centering
+\small
 \caption{Operational stages of the SEF program and what each stage must justify.}
 \label{tab:sef-stages}
 \small
@@ -248,14 +251,14 @@ Search claim & trajectories on $M_x$ & geometric regularity improves optimizatio
 \end{tabular}
 \end{table}
 
-\subsection{Test statistic for computational validation}
+\subsection{Test Statistic for Computational Validation}
 Let $\mathcal{F}$ denote a family of size-matched instances and let $T_{\mathrm{solve}}(x)$ be a declared solver cost. A simple family-level validation statistic is
 \[
 T_{\mathrm{SEF}} = \operatorname{corr}\!\bigl(\widehat{\kappa}(x), T_{\mathrm{solve}}(x)\bigr),
 \]
 where $\widehat{\kappa}(x)$ is an estimated curvature summary or curvature-irregularity score. If the theory has empirical value, this association should be stable under family-specific controls rather than appearing only in aggregate across heterogeneous benchmarks.
 
-\subsection{Decision rule}
+\subsection{Decision Rule}
 An empirical SEF study should count as supportive only if all of the following hold:
 \begin{enumerate}[leftmargin=*]
 \item curvature summaries are reproducible under repeated estimation;
@@ -264,7 +267,7 @@ An empirical SEF study should count as supportive only if all of the following h
 \item any claimed optimization gain is not merely a mixing-time artifact.
 \end{enumerate}
 
-\section{Why the main bridge remains open}
+\section{Why the Main Bridge Remains Open}
 The standard mixing-time argument yields rapid approach to stationarity under a positive spectral gap \citep{levin2009markov}. Global optimization, however, requires substantially more. A fast-mixing Markov process may still allocate negligible mass to globally optimal states or may fail to encode the objective information needed to identify those states.
 
 \begin{figure}[t]
@@ -288,12 +291,13 @@ The standard mixing-time argument yields rapid approach to stationarity under a 
 
 This is consistent with hardness phenomena already known for expanding or spectrally regular combinatorial structures \citep{arora1998proof}. The SEF hypothesis is therefore viable only if it identifies geometric structure stronger than ordinary expansion alone.
 
-\section{Relation to existing barriers and theories}
+\section{Relation to Existing Barriers and Theories}
 The SEF program is adjacent to geometric complexity theory in spirit, although it relies on differential-geometric and transport-style tools rather than representation-theoretic obstructions \citep{mulmuley2001gct}. It also remains subject to the conceptual pressure exerted by established proof barriers: relativization, natural proofs, and algebrization remain the relevant background constraints \citep{baker1975relativizations,razborov1997natural,aaronson2009algebrization}. At present, SEF should therefore be read as a structural program of inquiry, not as a demonstrated route around those barriers.
 
-\section{Falsifiers and what counts as evidence}
+\section{Falsifiers and What Counts as Evidence}
 \begin{table}[t]
 \centering
+\small
 \caption{What would count as evidence for or against the SEF hypothesis.}
 \label{tab:sef-evidence}
 \begin{tabular}{p{0.24\linewidth}p{0.30\linewidth}p{0.32\linewidth}}
@@ -310,7 +314,7 @@ Is the framework overly broad? & restrictive instance subsets identified & hard 
 
 The SEF program is empirical in a precise sense. Outside the proved lemma, its value depends on whether the proposed quantities are computable and whether they contribute information not already captured by simpler hardness proxies. A family of hard counterexamples satisfying the required curvature and embedding premises would weigh directly against the program. Likewise, if $CD(0,d)$ rarely holds on nontrivial NP-complete families, the framework may remain mathematically coherent while offering limited algorithmic relevance.
 
-\section{Limitations and future work}
+\section{Limitations and Future Work}
 Three limitations dominate the present manuscript. First, the curvature condition is assumed rather than demonstrated for a nontrivial NP-complete family. Second, the bridge from spectral regularity to polynomial-time optimization remains open. Third, the embedding introduces approximation error that may distort the very structure the framework seeks to preserve.
 
 The most serious next steps are therefore concrete:

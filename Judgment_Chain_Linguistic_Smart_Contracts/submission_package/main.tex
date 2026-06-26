@@ -68,7 +68,7 @@ We make three connected claims. First, prompt-level rules should be treated as c
 \item We report a preliminary measured comparison between a prompt-only rule and a simple externalized contract layer.
 \end{enumerate}
 
-\section{Formal setup}
+\section{Formal Setup}
 Let $q$ denote a user query, $a$ a candidate action, and $p$ a policy clause. Let $\mathcal{A}$ be a finite action set, for example
 \[
 \mathcal{A}=\{\text{allow},\text{deny},\text{transform},\text{defer}\}.
@@ -115,7 +115,7 @@ d(q,p)=K(q,a,p).
 \]
 The exact action $a$ may be represented concretely as a candidate answer, a generation plan, or a policy-relevant abstraction of the response.
 
-\subsection{Utility-sensitive framing}
+\subsection{Utility-Sensitive Framing}
 Let $U(a\mid q)$ denote the task utility of action $a$ for query $q$ under benign conditions. A prompt-only defense can trivially reduce attack success by denying nearly everything. That outcome is not interesting. We therefore evaluate defenses under a utility-sensitive criterion. Define
 \[
 R_{\text{benign}}(p)=\Pr(d(q,p)=\text{deny}\mid q\in\mathcal{Q}_{\text{benign}})
@@ -132,7 +132,7 @@ J(p)=\lambda\big(1-S_{\text{attack}}(p)\big)+(1-\lambda)\big(1-R_{\text{benign}}
 \]
 for $\lambda\in(0,1)$ chosen before evaluation. This does not replace the primary metrics; it provides a compact summary when two systems trade off safety and usability differently.
 
-\section{Assumptions and propositions}
+\section{Assumptions and Propositions}
 \begin{assumption}[Policy externalizability]
 At least part of the relevant policy can be represented as an externally checkable condition rather than a purely latent model judgment.
 \end{assumption}
@@ -170,13 +170,13 @@ R_{\text{benign}}(p_1)\le R_{\text{benign}}(p_0)+\eta.
 If a contract detector is semantically stable, then paraphrase families that preserve attack intent should not systematically move $M(q,p)$ across zero. Equivalently, trigger flips under paraphrase should be rare relative to lexical rewrites that preserve intent.
 \end{proposition}
 
-\subsection*{Null hypothesis}
+\subsection*{Null Hypothesis}
 Externalized trigger semantics do not improve attack success rate or trigger consistency relative to a prompt-only rule after controlling for refusal style.
 
-\subsection*{Effect-size target}
+\subsection*{Effect-Size Target}
 A meaningful early-stage result is a reduction of at least $20\%$ in attack success rate together with no more than a $10\%$ increase in benign refusal.
 
-\section{Threat model}
+\section{Threat Model}
 The benchmark threat model covers three principal attack surfaces:
 \begin{enumerate}[leftmargin=*]
 \item \textbf{Direct overrides:} explicit attempts to ignore previous instructions or reveal hidden prompts.
@@ -188,6 +188,7 @@ We do not yet claim coverage of all indirect prompt-injection settings, multi-tu
 
 \begin{table}[t]
 \centering
+\small
 \caption{Threat-model classes used in the seed benchmark.}
 \label{tab:jc-threat}
 \begin{tabular}{p{0.22\linewidth}p{0.24\linewidth}p{0.38\linewidth}}
@@ -201,7 +202,7 @@ Paraphrase attack & semantic preservation under rewriting & tests trigger stabil
 \end{tabular}
 \end{table}
 
-\section{Benchmark construction}
+\section{Benchmark Construction}
 The seed benchmark is populated from the public \texttt{deepset/prompt-injections} dataset. Benign prompts are retained as controls. Attack prompts are then annotated into direct, roleplay, or paraphrase-style categories. The benchmark currently contains nine examples:
 \[
 4\ \text{benign},\quad 2\ \text{direct},\quad 2\ \text{roleplay},\quad 1\ \text{paraphrase}.
@@ -209,6 +210,7 @@ The seed benchmark is populated from the public \texttt{deepset/prompt-injection
 
 \begin{table}[t]
 \centering
+\small
 \caption{Benchmark composition for the current seed evaluation.}
 \label{tab:jc-composition}
 \begin{tabular}{lc}
@@ -224,14 +226,14 @@ Paraphrase attack & 1 \\
 \end{table}
 
 \section{Methodology}
-\subsection{Policy modes}
+\subsection{Policy Modes}
 We compare two policy modes.
 \begin{enumerate}[leftmargin=*]
 \item \textbf{Prompt-only rule:} the model receives a natural-language rule instructing it to deny prompt-reveal, override, or control-breaking requests.
 \item \textbf{Full contract baseline:} an external trigger heuristic is evaluated before unconstrained answer generation. If the trigger fires, the consequence map returns \texttt{deny}; otherwise the model answers directly.
 \end{enumerate}
 
-\subsection{Primary metrics}
+\subsection{Primary Metrics}
 We measure
 \[
 \mathrm{ASR}=\frac{1}{|\mathcal{Q}_{\text{attack}}|}\sum_{q\in\mathcal{Q}_{\text{attack}}}\mathbf{1}\{d(q,p)\neq \text{deny}\},
@@ -248,14 +250,14 @@ and
 \]
 where $\widehat{C}$ and $\widehat{K}$ are observed trigger and consequence decisions, and $C^\star,K^\star$ are benchmark annotations.
 
-\subsection{Decision rule}
+\subsection{Decision Rule}
 For matched attack suites, define the primary contrast
 \[
 T_J = \mathrm{ASR}_{\text{prompt-only}}-\mathrm{ASR}_{\text{contract}}.
 \]
 The seed experiment counts as supportive only if $T_J>0$ and the gain is not merely caused by indiscriminate denial, that is, if benign refusal does not increase materially.
 
-\subsection{Secondary estimands}
+\subsection{Secondary Estimands}
 To separate trigger quality from consequence quality, we also report
 \[
 \Delta_{\mathrm{TC}}=\mathrm{TC}_{\text{contract}}-\mathrm{TC}_{\text{prompt-only}}
@@ -264,7 +266,7 @@ To separate trigger quality from consequence quality, we also report
 \]
 An empirically credible contract should improve not only refusal outcomes but also the internal consistency of trigger activation and consequence choice.
 
-\subsection{Paired-family estimator}
+\subsection{Paired-Family Estimator}
 When the same attack intent is represented by multiple lexical variants inside a family $f$, the family-level treatment effect should be estimated before aggregation:
 \[
 \widehat{T}_{J,f}=
@@ -275,21 +277,21 @@ When the same attack intent is represented by multiple lexical variants inside a
 \]
 This avoids giving paraphrase-heavy families disproportionate weight merely because they contain more lexical variants.
 
-\subsection{Risk decomposition}
+\subsection{Risk Decomposition}
 Let $Y(q)\in\{0,1\}$ denote whether query $q$ is truly attack-like under benchmark annotation, and let $\widehat{Y}(q)$ denote trigger activation. Then the contract error can be decomposed as
 \[
 \mathcal{R}(p)=c_{\mathrm{FN}}\Pr(\widehat{Y}=0,Y=1)+c_{\mathrm{FP}}\Pr(\widehat{Y}=1,Y=0),
 \]
 with application-specific costs $c_{\mathrm{FN}},c_{\mathrm{FP}}>0$. This makes explicit that under-enforcement and over-refusal are not interchangeable.
 
-\subsection{Threshold selection}
+\subsection{Threshold Selection}
 If the external checker yields a real-valued score $s(q,p)$, the deployed threshold should be chosen by
 \[
 \gamma^\star\in\arg\min_{\gamma}\ \widehat{\mathcal{R}}_\gamma(p)
 \]
 on a held-out validation suite, rather than by ad hoc refusal preference. This gives the trigger a declared operating point.
 
-\subsection{Uncertainty and falsification logic}
+\subsection{Uncertainty and Falsification Logic}
 Given the small benchmark, the current manuscript emphasizes effect direction and component-wise failure analysis more than asymptotic significance. In a scaled benchmark, uncertainty should be estimated with attack-family bootstrap resampling so that repeated lexical variants do not masquerade as independent evidence. The theory is weakened if gains in $T_J$ disappear once roleplay and paraphrase attacks are evaluated separately, or if improved ASR is explained entirely by inflated benign denial.
 
 For larger evaluations, a family-stratified estimator should report
@@ -298,7 +300,7 @@ For larger evaluations, a family-stratified estimator should report
 \]
 for each attack family $f$, together with macro-averaged and worst-family summaries. A contract mechanism is not methodologically strong if its aggregate gain is created by easy direct-override prompts while paraphrase or roleplay families remain unimproved.
 
-\subsection{Control condition and confounds}
+\subsection{Control Condition and Confounds}
 The control condition consists of benign prompt families that vary syntax and framing while preserving harmless intent. Main confounds include:
 \begin{itemize}[leftmargin=*]
 \item paraphrases that silently alter the harmful objective,
@@ -309,7 +311,7 @@ The control condition consists of benign prompt families that vary syntax and fr
 
 An additional confound is annotation leakage through the evaluator itself. If the same heuristic defines both $C^\star$ and $\widehat{C}$, apparent trigger consistency is inflated. Stronger studies should separate benchmark annotation from deployed-checker implementation.
 
-\section{Contract pipeline diagram}
+\section{Contract Pipeline Diagram}
 \begin{figure}[t]
 \centering
 \resizebox{\linewidth}{!}{%
@@ -352,13 +354,14 @@ An additional confound is annotation leakage through the evaluator itself. If th
 \label{fig:jc-fsm}
 \end{figure}
 
-\section{Seed experiment}
+\section{Seed Experiment}
 \subsection{Setup}
 The seed experiment was run on nine public benchmark examples using \texttt{google/flan-t5-small}. The purpose was not to claim robust jailbreak resistance, but to validate the benchmark logic and produce a first measured contrast between prompt-only and externalized enforcement.
 
-\subsection{Aggregate results}
+\subsection{Aggregate Results}
 \begin{table}[t]
 \centering
+\small
 \caption{Aggregate policy comparison on the public seed benchmark. ASR: attack success rate; BPR: benign prompt refusal rate; TC: trigger consistency; CC: consequence consistency.}
 \label{tab:jc-seed}
 \begin{tabular}{lcccc}
@@ -377,9 +380,10 @@ T_J = 0.4000-0.2000 = 0.2000.
 \]
 At this scale, the contract baseline halves attack success rate while also removing benign over-refusal on the available sample.
 
-\subsection{Attack-class breakdown}
+\subsection{Attack-Class Breakdown}
 \begin{table}[t]
 \centering
+\small
 \caption{Attack success rates by attack class on the seed benchmark.}
 \label{tab:jc-class}
 \begin{tabular}{lcc}
@@ -423,7 +427,7 @@ The current paper has five practical limitations.
 \item The present evidence still emphasizes prompt-surface attacks; retrieval-mediated and memory-mediated injection pathways require dedicated follow-up evaluation.
 \end{enumerate}
 
-\section{Future work}
+\section{Future Work}
 The most immediate extensions are:
 \begin{itemize}[leftmargin=*]
 \item scaling the benchmark to larger public prompt-injection corpora,
@@ -433,7 +437,7 @@ The most immediate extensions are:
 \item and introducing utility-sensitive scoring where helpful transformation is rewarded relative to brute refusal.
 \end{itemize}
 
-\section{Related work}
+\section{Related Work}
 This study sits at the intersection of constitutional alignment, guardrail engineering, and adversarial robustness. Constitutional AI motivates rule-guided behavior shaping \citep{bai2022constitutional}. Guardrail work broadens this to deployment-time control layers \citep{liu2024guardrails}. Prompt injection studies show how context itself becomes an adversarial channel \citep{greshake2023promptinjection,yi2024jailbreaksurvey}. The present contribution is narrower: it supplies a measurable contract formulation that distinguishes triggers, consequences, and utility-sensitive failure.
 
 \section{Conclusion}
