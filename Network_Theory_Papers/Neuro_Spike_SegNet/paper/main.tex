@@ -56,7 +56,7 @@ The baseline discrete-time LIF dynamics are
 \[
 V_i^\ell[t]=\beta V_i^\ell[t-1]+I_i^\ell[t]-S_i^\ell[t-1]V_{\mathrm{th}},
 \]
-where $\beta=e^{-\Delta t/\tau}$ is the membrane decay factor and $V_{\mathrm{th}}$ is the firing threshold.
+where $\beta=e^{-\Delta t/\tau}$ is the membrane decay factor and $V_{\mathrm{th}}$ is the firing threshold \citep{izhikevich2003simple}.
 \end{definition}
 
 \begin{definition}[Sleep--wake gate]
@@ -67,6 +67,14 @@ Let $G(t)\in\{0,1\}$ denote a global phase indicator with $G(t)=0$ in the wake p
 V_{\mathrm{th,eff}}(t)=V_{\mathrm{th,base}}\bigl(1+\lambda_{\mathrm{thresh}}G(t)\bigr),
 \]
 with gating strengths $\lambda_{\mathrm{leak}},\lambda_{\mathrm{thresh}}\ge 0$.
+\end{definition}
+
+\begin{definition}[Gate onset schedule]
+For a chosen onset time $t_s\in\{2,\dots,T\}$, the simplest schedule is
+\[
+G(t)=\mathbf{1}\{t\ge t_s\}.
+\]
+This makes the sleep phase a declared intervention rather than an implicit narrative label.
 \end{definition}
 
 \begin{definition}[Phase-conditioned spike rate]
@@ -83,6 +91,15 @@ Let $\mathcal{T}_W$ and $\mathcal{T}_S$ denote wake and sleep intervals. The red
 \rho_{\mathrm{sup}}=1-\frac{R(\mathcal{T}_S)}{R(\mathcal{T}_W)+\varepsilon},
 \]
 for small $\varepsilon>0$. Larger $\rho_{\mathrm{sup}}$ indicates stronger suppression of late-phase activity.
+\end{definition}
+
+\begin{definition}[Selective suppression coefficient]
+The gate is intended to act mainly in the sleep phase. Define
+\[
+\kappa_{\mathrm{sel}}=
+\frac{\Delta_R^{S}-\Delta_R^{W}}{R_{\mathrm{base}}(\mathcal{T}_S)+\varepsilon},
+\]
+where $\Delta_R^{W}$ and $\Delta_R^{S}$ are the wake- and sleep-phase rate reductions introduced later. Positive $\kappa_{\mathrm{sel}}$ indicates phase-selective suppression rather than global excitability collapse.
 \end{definition}
 
 \begin{definition}[Energy proxy]
@@ -155,7 +172,7 @@ Sleep--wake membrane gating does not reduce late-phase spike rate or energy rela
 The original report implies a practically meaningful target of at least $30\%$ total spike-rate reduction with less than $2$ percentage points loss in mIoU.
 
 \section{Architecture and mechanism}
-Neuro-Spike SegNet uses an encoder--decoder segmentation pipeline in which all convolutional blocks are replaced by spiking counterparts. The encoder contracts spatial resolution and accumulates hierarchical features, the bottleneck integrates broader context, and the decoder restores resolution through transposed spiking convolutions with skip connections.
+Neuro-Spike SegNet uses an encoder--decoder segmentation pipeline in which all convolutional blocks are replaced by spiking counterparts. The encoder contracts spatial resolution and accumulates hierarchical features, the bottleneck integrates broader context, and the decoder restores resolution through transposed spiking convolutions with skip connections. Structurally, the design follows the same coarse-to-fine logic that makes U-Net-like segmentation effective, but replaces dense activations with event-driven state updates \citep{ronneberger2015unet}.
 
 \begin{figure}[t]
 \centering
@@ -195,6 +212,15 @@ T_Q = \mathrm{mIoU}_{\mathrm{gated}}-\mathrm{mIoU}_{\mathrm{base}}.
 \]
 The manuscript is supported when $T_R>0$ and $T_E>0$ while $T_Q$ remains near zero from an application standpoint.
 
+\subsection{Paired scene-level estimator}
+When baseline and gated runs are available for the same scene $j$, the natural estimator is paired:
+\[
+\widehat{T}_R=\frac{1}{n}\sum_{j=1}^{n}\left[
+R_{\mathrm{base},j}(\mathcal{T}_S)-R_{\mathrm{gated},j}(\mathcal{T}_S)
+\right],
+\]
+with analogous definitions for $\widehat{T}_E$ and $\widehat{T}_Q$. This removes between-scene activity heterogeneity from the primary comparison.
+
 \subsection{Phase-normalized contrasts}
 To ensure that suppression is specific to the sleep interval rather than a global firing-rate collapse, define
 \[
@@ -207,8 +233,27 @@ The intended mechanism predicts $\Delta_R^{S}\gg \Delta_R^{W}$.
 \subsection{Pareto admissibility}
 For deployment, a parameter setting $(\lambda_{\mathrm{leak}},\lambda_{\mathrm{thresh}})$ is admissible only if no alternative setting yields both lower energy and higher mIoU. This converts the ablation into a Pareto-screening problem rather than an isolated hyperparameter sweep.
 
+\subsection{Decision rule}
+The gating mechanism is treated as supported only if the same parameter regime satisfies all of the following:
+\begin{enumerate}[leftmargin=*]
+\item $\widehat{T}_R>0$ with the bulk of scene-level contrasts positive;
+\item $\widehat{T}_E>0$ after controller overhead is counted;
+\item $\widehat{T}_Q\ge -\delta$ for the declared tolerance; and
+\item $\kappa_{\mathrm{sel}}>0$, ruling out global firing-rate collapse.
+\end{enumerate}
+
 \subsection{Inference protocol}
 For replicated runs, each scene or sequence should be evaluated under multiple random encoding seeds, and uncertainty for $T_R$, $T_E$, and $T_Q$ should be reported with scene-level bootstrap intervals. Scene-level resampling is the relevant unit because per-time-step spikes are not independent observations.
+
+\subsection{Secondary stability statistic}
+For dynamic scenes, one should additionally monitor
+\[
+T_{\mathrm{dyn}}=
+\mathbb{E}\!\left[R_{\mathrm{base}}(\mathcal{T}_S)-R_{\mathrm{gated}}(\mathcal{T}_S)\mid \text{dynamic}\right]
+-
+\mathbb{E}\!\left[R_{\mathrm{base}}(\mathcal{T}_S)-R_{\mathrm{gated}}(\mathcal{T}_S)\mid \text{static}\right].
+\]
+A strongly negative value would indicate that the gate is merely exploiting static-scene idleness and does not transfer to harder temporal settings.
 
 \subsection{Control condition}
 The relevant control is a matched SNN segmentation model with identical topology, coding scheme, and simulation horizon but without phase-dependent modulation of leak and threshold.

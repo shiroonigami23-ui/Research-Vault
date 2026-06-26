@@ -295,6 +295,14 @@ Let $B$ denote the number of bootstrap resamples drawn at family level. The repo
 \]
 where the quantiles are taken over bootstrap replicates that resample prompt families, not individual generations. This choice aligns the uncertainty estimate with the unit of scientific generalization.
 
+\subsection{Standardized effect size}
+To complement raw contrasts, we recommend the family-pooled standardized effect
+\[
+g_N=\frac{\overline{N}_{\text{contr}}-\overline{N}_{\text{diff}}}
+{\sqrt{\tfrac{1}{2}\left(\widehat{\sigma}_{\text{contr}}^2+\widehat{\sigma}_{\text{diff}}^2\right)}}.
+\]
+This prevents small but noisy raw differences from being mistaken for substantive contradiction effects.
+
 \subsection{Regression-form identification}
 To separate contradiction effects from correlated prompt properties, we recommend the family-fixed-effects model
 \[

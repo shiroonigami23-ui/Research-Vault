@@ -38,7 +38,7 @@ Lightweight segmentation systems are attractive for deployment on edge devices, 
 \section{Introduction}
 Semantic segmentation is a dense decision problem, so even small perturbations can alter many output pixels at once. On safety-critical edge platforms, that fragility is harder to tolerate because the systems are often lightweight, latency-constrained, and exposed to uncontrolled environments. Backbone compression improves efficiency, but it does not by itself protect the model from adversarial or tampering-style disturbances \citep{howard2019mobilenetv3,goodfellow2015explaining}.
 
-The motivating idea of SecureParseNet is simple: if the segmentation output is structurally corrupted, the system should not only degrade gracefully but also know that it has been compromised. We therefore pair a segmentation decoder with an integrity head that computes a differentiable perceptual signature over low-frequency output structure. The paper’s claim is not that integrity hashing alone solves adversarial robustness. The sharper claim is that a differentiable integrity objective can provide a reliable detection signal even when semantic quality begins to degrade.
+The motivating idea of SecureParseNet is simple: if the segmentation output is structurally corrupted, the system should not only degrade gracefully but also know that it has been compromised. We therefore pair a segmentation decoder with an integrity head that computes a differentiable perceptual signature over low-frequency output structure, adapting the perceptual-hash tradition to an end-to-end trainable setting \citep{zauner2010implementation}. The paper's claim is not that integrity hashing alone solves adversarial robustness. The sharper claim is that a differentiable integrity objective can provide a reliable detection signal even when semantic quality begins to degrade.
 
 \paragraph{Contributions.}
 \begin{enumerate}[leftmargin=*]
@@ -51,10 +51,18 @@ The motivating idea of SecureParseNet is simple: if the segmentation output is s
 \section{Formal setup}
 Let $X\in[0,1]^{H\times W\times C}$ be an input image, let $E$ and $D$ denote encoder and decoder, and let $Y_{\mathrm{seg}}=D(E(X))$ be the segmentation probability map.
 
-\begin{definition}[Differentiable perceptual hash]
-Let $L(X)$ denote a selected block of low-frequency coefficients from a 2D spectral transform of the segmentation output. The differentiable perceptual hash is
+\begin{definition}[Low-frequency coefficient block]
+Let $F\in\mathbb{R}^{H\times H}$ and $G\in\mathbb{R}^{W\times W}$ denote orthonormal transform matrices, and let $P_k$ extract the leading $k\times k$ block. For a single-channel segmentation score map $Y$, define
 \[
-H_{\mathrm{soft}}(X)=\frac{1}{2}\left(1+\tanh\bigl(\beta(L(X)-\mu_L)\bigr)\right),
+L(Y)=P_k FYG^\top P_k^\top.
+\]
+In the current manuscript, $F$ and $G$ are taken as DCT bases and $k=8$.
+\end{definition}
+
+\begin{definition}[Differentiable perceptual hash]
+Let $L(Y_{\mathrm{seg}})$ denote a selected block of low-frequency coefficients from a 2D spectral transform of the segmentation output. The differentiable perceptual hash is
+\[
+H_{\mathrm{soft}}(X)=\frac{1}{2}\left(1+\tanh\bigl(\beta(L(Y_{\mathrm{seg}})-\mu_L)\bigr)\right),
 \]
 where $\mu_L$ is the mean of the selected coefficients and $\beta>0$ is a temperature parameter.
 \end{definition}
@@ -119,6 +127,15 @@ An integrity signal is operationally useful only if it rises sharply under attac
 Because $H_{\mathrm{soft}}$ uses smooth thresholding, gradients can propagate from the integrity objective back into the segmentation backbone, unlike with a hard binary hash.
 \end{proposition}
 
+\begin{proposition}[Perturbation amplification bound]
+Assume the transform operators are orthonormal and the segmentation decoder is locally Lipschitz with constant $K_D$ on the evaluation region. Then for any perturbation pair $(X,X')$,
+\[
+\|L(Y_{\mathrm{seg}}(X))-L(Y_{\mathrm{seg}}(X'))\|_F
+\le K_D \|X-X'\|_F.
+\]
+The integrity objective is therefore interpretable as a structured output-space detector whose sensitivity is bounded by the local decoder geometry rather than by arbitrary post hoc thresholding.
+\end{proposition}
+
 \begin{proposition}[Detection separation]
 If low-frequency structure is preserved in clean predictions but disrupted under adversarial perturbation, then
 \[
@@ -159,7 +176,7 @@ SecureParseNet consists of a lightweight segmentation backbone and an auxiliary 
 
 \section{Methodology}
 \subsection{Differentiable spectral hashing}
-The supplied source paper uses a 2D transform followed by soft thresholding of an $8\times 8$ low-frequency block. This is a sensible design because it moves the integrity test away from pixelwise noise and toward coarser scene structure. The temperature parameter $\beta$ controls the smoothness of the binarization surrogate.
+The supplied source paper uses a 2D transform followed by soft thresholding of an $8\times 8$ low-frequency block. This is a sensible design because it moves the integrity test away from pixelwise noise and toward coarser scene structure \citep{zauner2010implementation}. The temperature parameter $\beta$ controls the smoothness of the binarization surrogate. In matrix form, the monitored coefficients are those in $L(Y_{\mathrm{seg}})$, and the training signal is backpropagated through the full transform-threshold chain.
 
 \subsection{Primary estimands}
 We separate three quantities:
@@ -191,12 +208,32 @@ When each clean sample $X_i$ is paired with attacked variants $\mathcal{A}_{\eps
 \]
 This paired form removes between-image structural variance from the primary detection analysis.
 
+\subsection{Effect-size estimand}
+For a fixed attack budget $\epsilon$, define the standardized integrity-separation effect size
+\[
+g_{\mathrm{int}}(\epsilon)=
+\frac{\overline{T}_{\mathrm{det},\epsilon}-\overline{T}_{\mathrm{det},0}}
+{\sqrt{\tfrac{1}{2}\left(\widehat{\sigma}_{\epsilon}^2+\widehat{\sigma}_{0}^2\right)}}.
+\]
+This quantity is useful because it is invariant to the absolute scaling of the hash metric.
+
 \subsection{Threshold calibration}
 The alarm threshold should be selected on held-out clean and perturbed validation sets by minimizing
 \[
 \widehat{\mathcal{R}}(\tau)=c_{\mathrm{miss}}\widehat{\Pr}(T_{\mathrm{det}}\le \tau\mid Y=1)+c_{\mathrm{false}}\widehat{\Pr}(T_{\mathrm{det}}>\tau\mid Y=0),
 \]
 with declared costs $c_{\mathrm{miss}},c_{\mathrm{false}}>0$.
+
+\subsection{Decision rule}
+The integrity mechanism counts as supported only if three conditions hold together on held-out attack families:
+\begin{enumerate}[leftmargin=*]
+\item $\Delta_{\mathrm{pair}}(\epsilon)>0$ for the declared attack budgets;
+\item $\mathrm{AUC}(T_{\mathrm{det}})$ remains materially above chance under paired clean-versus-attacked comparison; and
+\item the integrity gain is not purchased by catastrophic semantic collapse, that is, the IoU drop must not be the sole driver of the signal.
+\end{enumerate}
+
+\subsection{Recommended inference protocol}
+The relevant resampling unit is the image or scene, not the pixel. Accordingly, confidence intervals for $\Delta_{\mathrm{pair}}(\epsilon)$, $g_{\mathrm{int}}(\epsilon)$, and $\mathrm{AUC}(T_{\mathrm{det}})$ should be obtained through paired bootstrap resampling over scenes. Where multiple attack strengths are evaluated per image, cluster-preserving bootstrap or repeated-measures modeling is preferable to naive pooling.
 
 \subsection{Control condition}
 The natural control is a matched segmentation network trained without the integrity head. That comparison is not fully reported in the source PDF, so this rebuilt manuscript treats it as a required next-step baseline.
@@ -247,7 +284,7 @@ Attack strength $\epsilon$ & Segmentation IoU & Hash MSE \\
 \section{Discussion}
 The main strength of SecureParseNet is architectural clarity. It does not rely solely on making the backbone harder to fool; it also asks whether the output still ``looks structurally like itself'' in a low-frequency sense. That gives the system a potentially useful fail-safe behavior: when dense prediction becomes unreliable, the integrity head can still surface the compromise.
 
-The proposal is also methodologically interesting because it shifts some robustness pressure away from input-space preprocessing and toward output-space self-consistency. That is a distinct angle from adversarial training or randomized smoothing \citep{madry2018towards}. Whether it is sufficient on its own remains open, but it is conceptually strong enough to justify deeper follow-up.
+The proposal is also methodologically interesting because it shifts some robustness pressure away from input-space preprocessing and toward output-space self-consistency. That is a distinct angle from adversarial training or randomized smoothing \citep{madry2018towards,cohen2019randomized}. Whether it is sufficient on its own remains open, but it is conceptually strong enough to justify deeper follow-up.
 
 \section{Limitations and future work}
 The current manuscript is constrained by the brevity of the supplied PDF and by the absence of a full replication package. The most important next steps are:

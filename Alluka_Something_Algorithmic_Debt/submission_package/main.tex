@@ -183,6 +183,16 @@ Let $\mathcal{B}$ denote length bins. A length-controlled aggregate slope may be
 \]
 where $\widehat{\beta}_b$ is the within-bin slope of $AD$ on $W$. This avoids treating length control as purely parametric when prompt distributions are irregular.
 
+\subsection{Monotonicity test statistic}
+If the theory is interpreted as an ordered-overhead claim, a simple nonparametric statistic is
+\[
+T_{\uparrow}=
+\frac{1}{|\mathcal{P}|}
+\sum_{(x_i,x_j)\in\mathcal{P}}
+\mathbf{1}\{W(x_i)>W(x_j),\ AD(x_i)>AD(x_j)\},
+\]
+where $\mathcal{P}$ is the set of length-matched prompt pairs. Values near $1/2$ indicate no systematic ordering beyond chance, whereas large values support monotone debt growth with ambition.
+
 \subsection{Inference and calibration}
 Uncertainty should be reported through prompt-family bootstrap resampling or by clustered standard errors when repeated prompts share templates or annotation pipelines. In addition, the ambition summary variable should be calibrated against its components by checking whether
 \[

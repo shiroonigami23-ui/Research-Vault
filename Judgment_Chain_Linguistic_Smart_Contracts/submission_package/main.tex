@@ -264,6 +264,17 @@ To separate trigger quality from consequence quality, we also report
 \]
 An empirically credible contract should improve not only refusal outcomes but also the internal consistency of trigger activation and consequence choice.
 
+\subsection{Paired-family estimator}
+When the same attack intent is represented by multiple lexical variants inside a family $f$, the family-level treatment effect should be estimated before aggregation:
+\[
+\widehat{T}_{J,f}=
+\frac{1}{|Q^{(f)}_{\mathrm{attack}}|}
+\sum_{q\in Q^{(f)}_{\mathrm{attack}}}
+\left[\mathbf{1}\{d_{\text{prompt-only}}(q)\neq\text{deny}\}-
+\mathbf{1}\{d_{\text{contract}}(q)\neq\text{deny}\}\right].
+\]
+This avoids giving paraphrase-heavy families disproportionate weight merely because they contain more lexical variants.
+
 \subsection{Risk decomposition}
 Let $Y(q)\in\{0,1\}$ denote whether query $q$ is truly attack-like under benchmark annotation, and let $\widehat{Y}(q)$ denote trigger activation. Then the contract error can be decomposed as
 \[
