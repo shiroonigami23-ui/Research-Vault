@@ -50,16 +50,16 @@ RJIT (Rustamji Institute of Technology), Gwalior, India \\
 \maketitle
 
 \begin{abstract}
-We present the Spectral Entropy-Fold (SEF) hypothesis as a geometric program for studying whether structural hardness in NP-complete instances can be expressed through discrete curvature, spectral dispersion, and kernel embeddings. The paper does not claim a proof of $P \neq NP$ or $P = NP$. Its narrower goal is to formalize a testable bridge: map a weighted problem graph into a reproducing-kernel Hilbert space, measure curvature and spectral regularity on the induced manifold, and ask whether a restricted class of instances thereby acquires optimization-friendly geometry. We define the Entropy-Fold operator, state a Ricci-Convexity Lemma that preserves a spectral-gap lower bound under stated curvature assumptions, separate what is proved from what remains conjectural, and build a publication-ready framework around assumptions, measurable claims, falsifiers, and validation targets. The contribution is therefore a sharpened mathematical scaffold for a geometric complexity hypothesis rather than an overstated complexity-class resolution.
+We formulate the Spectral Entropy-Fold (SEF) hypothesis as a geometric research program for studying whether structural hardness in NP-complete instances can be represented through discrete curvature, spectral dispersion, and kernel embeddings. The manuscript does not claim a resolution of $P$ versus $NP$. Its more limited aim is to define a testable bridge: construct a weighted problem graph, embed that graph into a reproducing-kernel Hilbert space, measure curvature and spectral regularity on the induced manifold, and determine whether a restricted instance class thereby acquires optimization-friendly geometry. We define the Entropy-Fold operator, state a conditional Ricci-Convexity Lemma preserving a spectral-gap lower bound under explicit curvature hypotheses, distinguish proved statements from conjectural implications, and specify measurable claims, falsifiers, and validation criteria. The result is a tighter mathematical scaffold for a geometric complexity hypothesis.
 \keywords{Complexity theory \and Discrete Ricci curvature \and Spectral graph theory \and RKHS embeddings \and Information geometry}
 \end{abstract}
 
 \section{Introduction}
-The $P$ versus $NP$ problem asks whether every decision problem whose solutions can be verified in polynomial time can also be solved in polynomial time. After decades of work, the problem remains unresolved, and several proof barriers have clarified why many familiar strategies are inadequate \citep{cook1971complexity,baker1975relativizations,razborov1997natural,aaronson2009algebrization}. That situation motivates a recurring methodological move: instead of attacking the class-separation statement directly, isolate a structural property that may distinguish hard instances from tractable ones and study its mathematical consequences.
+The $P$ versus $NP$ problem asks whether every decision problem whose solutions can be verified in polynomial time can also be solved in polynomial time. The problem remains unresolved, and several barrier results explain why broad classes of familiar proof techniques are unlikely to suffice \citep{cook1971complexity,baker1975relativizations,razborov1997natural,aaronson2009algebrization}. One response to this impasse is to abandon direct class-separation rhetoric and instead isolate structural properties that may distinguish hard instances from tractable ones.
 
-The present paper explores one such property. Discrete Ricci curvature on graphs and metric spaces captures how local neighborhoods expand, contract, and mix under transport \citep{ollivier2009ricci,lin2011ricci}. Spectral graph theory captures expansion and diffusion through eigenvalue structure \citep{chung1997spectral}. Information geometry, meanwhile, treats families of distributions or models as curved objects whose geometry encodes inference difficulty \citep{amari2016information}. The SEF hypothesis joins these traditions by asking whether an NP-complete instance can be assigned an embedded geometric object whose curvature and spectral profile track combinatorial hardness.
+The present paper studies one such property. Discrete Ricci curvature on graphs and metric spaces captures how local neighborhoods expand, contract, and mix under transport \citep{ollivier2009ricci,lin2011ricci}. Spectral graph theory records expansion and diffusion through eigenvalue structure \citep{chung1997spectral}. Information geometry treats families of models as curved spaces whose geometry encodes inferential difficulty \citep{amari2016information}. The SEF hypothesis places these strands in a common framework by asking whether an NP-complete instance can be associated with an embedded geometric object whose curvature and spectral profile carry information about combinatorial hardness.
 
-This paper is careful about scope. The Ricci-Convexity Lemma proved below is conditional and local to the adopted framework. The SEF hypothesis itself is a conjecture, not a theorem. The missing bridge from spectral regularity to polynomial-time global optimization is left explicit and central rather than being concealed rhetorically.
+Scope matters here. The Ricci-Convexity Lemma proved below is conditional and internal to the proposed framework. The SEF hypothesis itself is conjectural. Most importantly, the missing bridge from spectral regularity to polynomial-time global optimization is treated as the main open step rather than as an implicit conclusion.
 
 \paragraph{Contributions.}
 \begin{enumerate}[leftmargin=*]
@@ -171,42 +171,42 @@ We now state the central proved statement in the SEF framework.
 
 \begin{lemma}[Ricci-Convexity]
 \label{lem:ricci-convexity}
-Let $M_x=\Phi_S(G_x)$ be the RKHS embedding of instance $x$. Suppose $M_x$ is compact, the induced diffusion operator $L$ on $M_x$ satisfies the Bakry--\'Emery curvature-dimension condition
+Let $M_x=\Phi_S(G_x)$ be the RKHS embedding of instance $x$. Assume that $M_x$ is compact, that the induced diffusion operator $L$ on $M_x$ satisfies the Bakry--\'Emery curvature-dimension condition
 \[
 \Gamma_2(g,g)\ge \frac{1}{d}(Lg)^2
 \]
-for all smooth test functions $g:M_x\to\mathbb{R}$, and the initial Laplace--Beltrami spectral gap obeys $\lambda_2(M_x)\ge \eta>0$. Then under normalized Ricci flow
+for every smooth test function $g:M_x\to\mathbb{R}$, and that the initial Laplace--Beltrami spectral gap obeys $\lambda_2(M_x)\ge \eta>0$. Then every normalized Ricci-flow trajectory
 \[
 \frac{\partial g_t}{\partial t} = -2\operatorname{Ric}(g_t),
 \]
-the spectral gap lower bound is preserved up to embedding-approximation error:
+defined on this regime preserves the spectral-gap lower bound up to embedding distortion:
 \[
 \lambda_2(M_x,t)\ge \eta - O(\varepsilon_{\mathrm{emb}}),
 \]
-where $\varepsilon_{\mathrm{emb}}$ denotes the distortion introduced by finite-dimensional kernel approximation.
+where $\varepsilon_{\mathrm{emb}}$ denotes the distortion induced by the finite-dimensional kernel approximation.
 \end{lemma}
 
 \paragraph{Proof sketch.}
 Under $CD(0,d)$, the Bakry--\'Emery theory yields a Poincar\'e inequality with constant depending on geometric control parameters \citep{bakry1985diffusions,ledoux2001concentration}. A Poincar\'e inequality implies a positive lower bound on the spectral gap of the Laplace--Beltrami operator. The kernel embedding is assumed to be approximately isometric at scale $\varepsilon_{\mathrm{emb}}$, so the corresponding discrete spectral structure is inherited up to controlled error. Under normalized Ricci flow with nonnegative effective curvature, the relevant entropy functional is nonincreasing in the sense exploited by Perelman \citep{perelman2002entropy}, preventing collapse of the lower spectral-gap bound within the stated regime. \hfill$\square$
 
 \paragraph{Interpretation.}
-Lemma~\ref{lem:ricci-convexity} is not an optimization theorem. It preserves a diffusion regularity quantity, namely a lower bound on $\lambda_2$, inside the subset of instances for which the curvature assumptions already hold.
+Lemma~\ref{lem:ricci-convexity} is a regularity statement, not an optimization theorem. Its conclusion is limited to preservation of a diffusion-relevant quantity, namely a lower bound on $\lambda_2$, within the subclass of instances for which the curvature assumptions are already valid.
 
 \section{The SEF conjecture}
-\begin{proposition}[SEF conjectural optimization bridge]
-There may exist a polynomial-time computable family of embeddings $\{\Phi_{S,x}\}$ and a fixed exponent $k$ such that for every NP-complete instance $x$ whose embedding satisfies $CD(0,d)$ with $d=O(n^k)$ and whose embedded objective $f_x$ contains no superpolynomially trapping non-global critical structures, a global optimum is recoverable in time $O(n^k)$.
+\begin{proposition}[Conjectural SEF optimization implication]
+Suppose there exists a polynomial-time computable family of embeddings $\{\Phi_{S,x}\}$ and a fixed exponent $k$ such that, for every NP-complete instance $x$, the embedded manifold $M_x$ satisfies $CD(0,d)$ with $d=O(n^k)$ and the embedded objective $f_x$ contains no non-global critical structure capable of trapping admissible descent trajectories for superpolynomial time. Under those additional conditions, one may conjecture that a global optimum is recoverable in time $O(n^k)$.
 \end{proposition}
 
-The point of this proposition is not that it has been proved. It has not. Its value is that it isolates the missing bridge exactly: spectral regularity and curvature control are not yet enough by themselves to deduce polynomial-time global optimization.
+This proposition is intentionally conditional. Its value lies in isolating the missing implication precisely: spectral regularity and curvature control do not by themselves yield polynomial-time global optimization.
 
 \subsection*{Null hypothesis}
-SEF-style curvature and spectral regularity do not, even after embedding, predict any practically useful reduction in optimization hardness beyond what follows from known expansion or relaxation properties alone.
+SEF-style curvature and spectral regularity, even after embedding, do not predict any practically useful reduction in optimization hardness beyond what is already explained by known expansion, relaxation, or density effects.
 
 \subsection*{Effect-size target}
-For computational validation, a meaningful early effect would be a reproducible negative association between curvature irregularity and solver efficiency within fixed problem families, after controlling for instance size and density.
+For computational validation, a meaningful early effect would be a reproducible within-family association between curvature irregularity and solver cost after explicit control for instance size, density, and baseline spectral covariates.
 
 \section{Algorithmic form of the program}
-The SEF framework can be operationalized as an analysis pipeline rather than as a finished solver.
+The SEF framework is most naturally operationalized as an analysis pipeline rather than as a finished solver.
 
 \begin{figure}[t]
 \centering
@@ -265,7 +265,7 @@ An empirical SEF study should count as supportive only if all of the following h
 \end{enumerate}
 
 \section{Why the main bridge remains open}
-The standard mixing-time argument yields rapid approach to stationarity under a positive spectral gap \citep{levin2009markov}. But global optimization demands more than fast mixing. A fast-mixing Markov process may still spend negligible probability mass near a global optimum or may require objective information that is not encoded by spectral diffusion alone.
+The standard mixing-time argument yields rapid approach to stationarity under a positive spectral gap \citep{levin2009markov}. Global optimization, however, requires substantially more. A fast-mixing Markov process may still allocate negligible mass to globally optimal states or may fail to encode the objective information needed to identify those states.
 
 \begin{figure}[t]
 \centering
@@ -289,7 +289,7 @@ The standard mixing-time argument yields rapid approach to stationarity under a 
 This is consistent with hardness phenomena already known for expanding or spectrally regular combinatorial structures \citep{arora1998proof}. The SEF hypothesis is therefore viable only if it identifies geometric structure stronger than ordinary expansion alone.
 
 \section{Relation to existing barriers and theories}
-The SEF program is adjacent to geometric complexity theory in spirit, though it uses differential-geometric and transport-style tools rather than representation-theoretic obstructions \citep{mulmuley2001gct}. The program also lives under the shadow of established proof barriers: relativization, natural proofs, and algebrization remain relevant background constraints \citep{baker1975relativizations,razborov1997natural,aaronson2009algebrization}. At present, SEF should be read as a structural research program, not as a demonstrated escape from those barriers.
+The SEF program is adjacent to geometric complexity theory in spirit, although it relies on differential-geometric and transport-style tools rather than representation-theoretic obstructions \citep{mulmuley2001gct}. It also remains subject to the conceptual pressure exerted by established proof barriers: relativization, natural proofs, and algebrization remain the relevant background constraints \citep{baker1975relativizations,razborov1997natural,aaronson2009algebrization}. At present, SEF should therefore be read as a structural program of inquiry, not as a demonstrated route around those barriers.
 
 \section{Falsifiers and what counts as evidence}
 \begin{table}[t]
@@ -308,10 +308,10 @@ Is the framework overly broad? & restrictive instance subsets identified & hard 
 \end{tabular}
 \end{table}
 
-The SEF program is empirical in an important sense. Outside the proved lemma, its value depends on whether the proposed quantities can be computed and whether they say something nontrivial about hardness. A counterexample family of hard instances satisfying the required curvature and embedding conditions would weigh heavily against the program. Likewise, if $CD(0,d)$ almost never holds on interesting NP-complete families, the framework may be mathematically elegant but algorithmically irrelevant.
+The SEF program is empirical in a precise sense. Outside the proved lemma, its value depends on whether the proposed quantities are computable and whether they contribute information not already captured by simpler hardness proxies. A family of hard counterexamples satisfying the required curvature and embedding premises would weigh directly against the program. Likewise, if $CD(0,d)$ rarely holds on nontrivial NP-complete families, the framework may remain mathematically coherent while offering limited algorithmic relevance.
 
 \section{Limitations and future work}
-Three limitations dominate the present manuscript. First, the curvature condition is assumed rather than demonstrated for a nontrivial NP-complete family. Second, the gap between spectral regularity and polynomial-time optimization remains open. Third, the embedding itself introduces approximation error that may distort exactly the structure one hopes to preserve.
+Three limitations dominate the present manuscript. First, the curvature condition is assumed rather than demonstrated for a nontrivial NP-complete family. Second, the bridge from spectral regularity to polynomial-time optimization remains open. Third, the embedding introduces approximation error that may distort the very structure the framework seeks to preserve.
 
 The most serious next steps are therefore concrete:
 \begin{enumerate}[leftmargin=*]
@@ -322,7 +322,7 @@ The most serious next steps are therefore concrete:
 \end{enumerate}
 
 \section{Conclusion}
-The SEF hypothesis is most useful when read with discipline. It does not presently settle complexity classes. What it does offer is a mathematically explicit way to ask whether certain hard instances possess a geometric witness of difficulty that survives spectral analysis and kernel embedding. That is enough to justify serious follow-up---provided the framework remains falsifiable, computationally grounded, and honest about the open bridge it has not yet crossed.
+The SEF hypothesis is most useful when read narrowly. It does not settle complexity classes. What it provides is a mathematically explicit language for asking whether certain hard instances admit a geometric witness of difficulty that survives spectral analysis and kernel embedding. That is sufficient to justify further study, provided the framework remains falsifiable, computationally grounded, and explicit about the bridge it has not yet crossed.
 
 \section*{Acknowledgment}
 The author thanks Yograj Sharma for supervision and feedback on the earlier version of this work, and the Department of Computer Science and Engineering at Rustamji Institute of Technology for institutional support.
